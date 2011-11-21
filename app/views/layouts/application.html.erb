@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>CloudInventory</title>
-  <%= stylesheet_link_tag    "application" %>
+  <title>CloudHIS</title>
+  <%= stylesheet_link_tag    "sink" %>
+  <%= stylesheet_link_tag    "ext-neptune" %>
+  
+  <%= javascript_include_tag "ext" %>
+  <%= javascript_include_tag "ext-neptune" %>
   <%= javascript_include_tag "application" %>
+  
   <%= csrf_meta_tags %>
 </head>
 <body>
-
-<%= yield %>
-
+	<%= yield %>
 </body>
 </html>
