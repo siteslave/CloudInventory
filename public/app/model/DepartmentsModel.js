@@ -1,7 +1,8 @@
-/**
- * Created by JetBrains RubyMine.
- * User: rubyonrails
- * Date: 11/21/11
- * Time: 9:33 AM
- * To change this template use File | Settings | File Templates.
- */
+Ext.define('CloudHIS.model.DepartmentsModel',{
+    extend: 'Ext.data.Model',
+    fields:[
+        {name: 'id', type: 'int'},
+        {name: 'name', type: 'string'}
+    ]
+
+});
