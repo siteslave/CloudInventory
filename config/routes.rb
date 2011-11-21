@@ -1,4 +1,14 @@
 CloudInventory::Application.routes.draw do
+  get "department/index"
+
+  get "department/update"
+
+  get "department/destroy"
+
+  get "department/show"
+
+  get "department/create"
+
   get "products/index"
 
   get "products/update"
@@ -73,6 +83,7 @@ CloudInventory::Application.routes.draw do
 
   resources :category
   resources :categorytype
+  resources :department
 
   # RESTFul for products
   resources :products
