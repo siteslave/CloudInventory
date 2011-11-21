@@ -5,18 +5,6 @@
 Ext.require(
 	'Ext.window.*'
 );
-
-comboRenderCategoriesType = new Ext.create('Ext.form.ComboBox', {
-    store: 'CategoriesTypesStore',
-    displayField: 'name',
-    valueField: 'id',
-    queryMode: 'local',
-    editable: false,
-    typeAhead: false,
-    name: 'type',
-    allowBlank: false,
-    isComponent: true
-});
     /*
      * Events listening.
      */
@@ -131,6 +119,132 @@ var addCategories = function() {
 
     winAddCategory.show();
 }
+// update category.
+var updateCategories = function(id, name, cat_type) {
+
+    var winUpdateCategory = Ext.create( 'Ext.window.Window', {
+        title: 'แก้ไขหมวดหมู่สินค้า',
+        width: 460,
+        //height: 300,
+        modal: true,
+        closeAction: 'destroy',
+        resizable: false,
+        layout: 'fit',
+        buttons: [
+            {
+                text: 'บันทึก',
+                iconCls: 'add',
+                handler: function() {
+                    var frmAdd = Ext.getCmp('cat-update-form-main').getForm();
+
+                        frmAdd.submit({
+
+                            success: function(f, a) {
+
+                                Ext.Msg.show({
+                                    title: 'ผลการบันทึกข้อมูล',
+                                    msg: 'บันทึกข้อมูลเสร็จเรียบร้อยแล้ว',
+                                    buttons: Ext.Msg.OK,
+                                    icons: Ext.Msg.INFO
+                                });
+
+                                frmAdd.reset();
+
+                            },
+
+                            failure: function(f, a) {
+                                var msg = '';
+                                // switch failure type.
+                                switch ( a.failureType ) {
+                                    case Ext.form.action.Action.CLIENT_INVALID:
+                                        msg = 'ข้อมูลไม่ถูกต้อง หรือ ไม่สมบูรณ์ \r กรุณาตรวจสอบใหม่';
+                                        break;
+                                    case Ext.form.action.Action.CONNECT_FAILURE:
+                                        msg = 'การเชื่อมต่อกับเซิร์ฟเวอร์มีปัญหา \r กรุณาตรวจสอบการเชื่อมต่ออินเตอร์เน็ต';
+                                        break;
+                                    case Ext.form.action.Action.SERVER_INVALID:
+                                        msg = a.result.msg;
+                                }
+                                // display message.
+                                Ext.Msg.show({
+                                    title: 'ผลการบันทึกข้อมูล',
+                                    msg: 'ไม่สามารถบันทึกข้อมูลได้ \n' + msg,
+                                    buttons: Ext.Msg.OK,
+                                    icons: Ext.Msg.ERROR
+                                });
+                            }
+                        });
+
+                }
+            },
+            {
+                text: 'ยกเลิก',
+                iconCls: 'refresh'
+            },
+            {
+                text: 'ปิดหน้าต่าง',
+                iconCls: 'close',
+                handler: function() {
+                    winUpdateCategory.destroy();
+                }
+            }
+        ],
+        items: [
+            new Ext.create('Ext.form.Panel', {
+                title: 'ข้อมูลเกี่ยวกับหมวดหมู่สินค้า' ,
+                id: 'cat-update-form-main',
+
+                url: '/category',
+                method: 'put',
+
+                bodyPadding: 20,
+                fieldDefaults: {
+                    width: 400,
+                    labelAlign: 'top'
+                },
+                items: [
+                    {
+                        xtype: 'textfield',
+                        readOnly: true,
+                        id: 'txt-cat-update-cat-id',
+                        name: 'id'
+                    },
+                    {
+                        xtype: 'textfield',
+                        fieldLabel: 'ชื่อหมวดหมู่สินค้า',
+                        name: 'name',
+                        id: 'txt-cat-update-cat-name',
+                        allowBlank: false
+                    },
+                    {
+                        xtype: 'combo',
+                        store: 'CategoriesTypesStore',
+                        id: 'cob-cat-update-cat-type',
+                        fieldLabel: 'ประเภทหมวดหมู่',
+                        displayField: 'name',
+                        valueField: 'id',
+                        queryMode: 'local',
+                        editable: false,
+                        typeAhead: false,
+                        name: 'type',
+                        allowBlank: false
+                    }
+
+                ]
+            })
+        ]
+    } );
+
+    var extcat_name = Ext.getCmp('txt-cat-update-cat-name'),
+    extcat_id = Ext.getCmp('txt-cat-update-cat-id'),
+    extcat_type = Ext.getCmp('cob-cat-update-cat-type');
+
+    extcat_id.setValue(id);
+    extcat_name.setValue(name);
+    extcat_type.setValue(cat_type);
+
+    winUpdateCategory.show();
+}
 
 Ext.define('CloudHIS.view.basic.CategoriesGrid', {
     extend: 'CloudHIS.view.Container',
@@ -190,7 +304,12 @@ Ext.define('CloudHIS.view.basic.CategoriesGrid', {
 	    ],
 	    listeners: {
 		itemdblclick: function(grid, record){
-		    console.log(record.get('name'));
+		    //console.log(record.get('id'));
+            var id = record.get('id'),
+                name = record.get('name'),
+                cat_type = record.get('categories_type_id');
+
+            updateCategories(id, name, cat_type);
 		}
 	    }
 	}
