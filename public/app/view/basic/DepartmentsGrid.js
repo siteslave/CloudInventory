@@ -139,9 +139,6 @@ Ext.define('CloudHIS.view.basic.DepartmentsGrid', {
             editor: {
                 allowBlank: false
             }
-        },
-		{
-            text: 'รหัสแผนก' ,flex: 1, dataIndex: 'id', hidden: true
         }
 	    ],
 	    tbar: [

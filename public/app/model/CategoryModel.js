@@ -3,7 +3,8 @@ Ext.define('CloudHIS.model.CategoryModel',{
     fields:[
         {name: 'id', type: 'int'},
         {name: 'name', type: 'string'},
-        {name: 'categories_type_id', type: 'int'}
+        {name: 'categories_type_id', type: 'int'},
+        {name: 'categories_type_name', type: 'string'}
     ]
 
 });

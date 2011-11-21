@@ -40,16 +40,16 @@ class CategoryController < ApplicationController
   def index
     @category = Category.all
     #
-    #@rows = @category.collect { |r| {
-    #    :id => r.id,
-    #    :name => r.name,
-    #    :type => r.categories_type
-    #
-    #}}
+    @rows = @category.collect { |r| {
+        :id => r.id,
+        :name => r.name,
+        :categories_type_id => r.categories_type_id,
+        :categories_type_name => r.categories_type.name
+    }}
     respond_to do |format|
-      format.html { render :json => { :success => true, :rows => @category } }
+      format.html { render :json => { :success => true, :rows => @rows } }
       format.xml  { render :xml => @category }
-      format.json { render :json => { :success => true, :rows => @category } }
+      format.json { render :json => { :success => true, :rows => @rows } }
     end
 
   end

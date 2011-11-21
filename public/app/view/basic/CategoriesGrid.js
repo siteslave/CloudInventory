@@ -149,30 +149,23 @@ Ext.define('CloudHIS.view.basic.CategoriesGrid', {
 	    columns: [
 		{xtype: 'rownumberer', text: 'ลำดับ'},
 		{
-            text: 'ชื่อหมวดหมู่' ,flex: 1, dataIndex: 'name',
-            editor: {
-                allowBlank: false
-            }
+            text: 'ชื่อหมวดหมู่' ,flex: 1, dataIndex: 'name'
         },
 		{
-            text: 'ประเภทหมวดหมู่' ,flex: 1, dataIndex: 'categories_type_id',
-            editor: {
-                xtype: 'combo',
-                store: 'CategoriesTypesStore',
-                displayField: 'name',
-                valueField: 'id',
-                queryMode: 'local',
-                editable: false,
-                typeAhead: false,
-                name: 'type',
-                allowBlank: false,
-                id: 'xxxxx'
-            },
+            text: 'ประเภทหมวดหมู่' ,flex: 1, dataIndex: 'categories_type_name'
+            /*,
             renderer: function(value) {
                 var combo = Ext.getCmp('xxxxx');
                 var record = combo.findRecordByValue(value);
                 return record.get(combo.displayField);
             }
+            */
+        },
+        {
+            text: 'cat_type_id', dataIndex: 'categories_type_id', hidden: true
+        },
+            {
+            text: 'categories_id', dataIndex: 'id', hidden: true
         }
 	    ],
 	    tbar: [
@@ -195,17 +188,11 @@ Ext.define('CloudHIS.view.basic.CategoriesGrid', {
                 iconCls:'print'
             }
 	    ],
-        plugins: [
-            Ext.create('Ext.grid.plugin.RowEditing', {
-                clicksToEdit: 0
-            })
-        ]
-	    /*,
 	    listeners: {
-		itemclick: function(grid, record){
+		itemdblclick: function(grid, record){
 		    console.log(record.get('name'));
 		}
-	    }*/
+	    }
 	}
     ]
 });

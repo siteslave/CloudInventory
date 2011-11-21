@@ -12,6 +12,7 @@ Ext.define('CloudHIS.store.DepartmentsStore', {
         reader: {
             type: 'json',
             root: 'rows',
+            idProperty: 'id',
             successProperty: 'success'
         },
         writer: {
@@ -20,5 +21,6 @@ Ext.define('CloudHIS.store.DepartmentsStore', {
         }
     },
     autoLoad: true,
-    autoSync: true
+    autoSync: true,
+    batch: true
 });
