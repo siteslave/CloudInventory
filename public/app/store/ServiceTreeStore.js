@@ -65,7 +65,8 @@ Ext.define('CloudHIS.store.ServiceTreeStore', {
                         text: 'รายการสินค้า', leaf: true
                     },
                     {
-                        text: 'หน่วยนับ', leaf: true
+                        text: 'หน่วยนับ', leaf: true,
+                        id: 'svTreeUnitCount'
                     },
                     {
                         text: 'หน่วยเบิก', leaf: true,

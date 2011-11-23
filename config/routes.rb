@@ -61,6 +61,7 @@ CloudInventory::Application.routes.draw do
   resources :category
   resources :categorytype
   resources :department
+  resources :unit_count
 
   # RESTFul for products
   resources :products

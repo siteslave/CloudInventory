@@ -5,21 +5,15 @@
 Ext.require(
 	'Ext.window.*'
 );
+//Ext.data.StoreManager.lookup('simpsonsStore')
+var UnitCountStore = Ext.create('CloudHIS.store.UnitCountStore');
 
-var CategoriesStore = Ext.create('CloudHIS.store.CategoryListStore');
+UnitCountStore.load();
 
-//load store.
-CategoriesStore.load({
-    params: {
-        id: 1
-    }
-});
-    
-// Add category.
-var addCategories = function() {
+var addUnitCount = function() {
 
-    var winAddCategory = Ext.create( 'Ext.window.Window', {
-        title: 'เพิ่มหมวดหมู่สินค้า',
+    var winAddUnitCount = Ext.create( 'Ext.window.Window', {
+        title: 'เพิ่มหน่วยนับ',
         width: 460,
         //height: 300,
         modal: true,
@@ -31,7 +25,7 @@ var addCategories = function() {
                 text: 'บันทึก',
                 iconCls: 'add',
                 handler: function() {
-                    var frmAdd = Ext.getCmp('cat-add-form-main').getForm();
+                    var frmAdd = Ext.getCmp('unitcount-add-form-main').getForm();
 
                         frmAdd.submit({
 
@@ -45,9 +39,11 @@ var addCategories = function() {
                                 });
 
                                 frmAdd.reset();
-                                CategoriesStore.load();
+                                UnitCountStore.load();
 
-                                winAddCategory.destroy();
+                                winAddUnitCount.destroy();
+
+
                             },
 
                             failure: function(f, a) {
@@ -83,16 +79,16 @@ var addCategories = function() {
                 text: 'ปิดหน้าต่าง',
                 iconCls: 'close',
                 handler: function() {
-                    winAddCategory.destroy();
+                    winAddUnitCount.destroy();
                 }
             }
         ],
         items: [
             new Ext.create('Ext.form.Panel', {
-                title: 'ข้อมูลเกี่ยวกับหมวดหมู่สินค้า' ,
-                id: 'cat-add-form-main',
+                title: 'ข้อมูลเกี่ยวกับหน่วยนับ' ,
+                id: 'unitcount-add-form-main',
 
-                url: '/category',
+                url: '/unit_count',
                 method: 'post',
 
                 bodyPadding: 20,
@@ -103,37 +99,22 @@ var addCategories = function() {
                 items: [
                     {
                         xtype: 'textfield',
-                        fieldLabel: 'ชื่อหมวดหมู่สินค้า',
-                        placeholder: 'พิมพ์ชื่อหมวดหมู่สินค้า',
+                        fieldLabel: 'ชื่อหน่วยนับ',
                         name: 'name',
                         allowBlank: false
-                    },
-                    {
-                        xtype: 'combo',
-                        store: 'CategoriesTypesStore',
-                        fieldLabel: 'ประเภทหมวดหมู่',
-                        displayField: 'name',
-                        valueField: 'id',
-                        queryMode: 'local',
-                        editable: false,
-                        typeAhead: false,
-                        name: 'categories_type_id',
-                        allowBlank: false
                     }
-
                 ]
             })
         ]
     } );
 
-		//open window
-    winAddCategory.show();
-}
-// update category.
-var updateCategories = function(id, name, cat_type) {
+    winAddUnitCount.show();
+}//addUnitcount
+//update unitcount
+var updateUnitCount = function(id, name) {
 
-    var winUpdateCategory = Ext.create( 'Ext.window.Window', {
-        title: 'แก้ไขหมวดหมู่สินค้า',
+    var winUpdateUnitCount = Ext.create( 'Ext.window.Window', {
+        title: 'เพิ่มหมวดหน่วยนับ',
         width: 460,
         //height: 300,
         modal: true,
@@ -145,14 +126,9 @@ var updateCategories = function(id, name, cat_type) {
                 text: 'บันทึก',
                 iconCls: 'add',
                 handler: function() {
-                /*
-                var Category = Ext.ModelMgr.getModel('CloudHIS.model.CategoryModel');
-                */
-                
+                    var frmAdd = Ext.getCmp('unitcount-add-form-main').getForm();
 
-                    var frmUpdate = Ext.getCmp('cat-update-form-main').getForm();
-
-                        frmUpdate.submit({
+                        frmAdd.submit({
 
                             success: function(f, a) {
 
@@ -162,15 +138,11 @@ var updateCategories = function(id, name, cat_type) {
                                     buttons: Ext.Msg.OK,
                                     icons: Ext.Msg.INFO
                                 });
-                                
-                                
-                                //var store = Ext.create('CloudHIS.store.CategoryListStore');
-                                
-                                
-                                
-                                frmUpdate.reset();
-                                winUpdateCategory.destroy();
-                                CategoriesStore.load();
+
+                                frmAdd.reset();
+                                UnitCountStore.load();
+
+                                winUpdateUnitCount.destroy();
 
                             },
 
@@ -196,7 +168,6 @@ var updateCategories = function(id, name, cat_type) {
                                 });
                             }
                         });
-                        
 
                 }
             },
@@ -204,16 +175,16 @@ var updateCategories = function(id, name, cat_type) {
                 text: 'ปิดหน้าต่าง',
                 iconCls: 'close',
                 handler: function() {
-                    winUpdateCategory.destroy();
+                    winUpdateUnitCount.destroy();
                 }
             }
         ],
         items: [
             new Ext.create('Ext.form.Panel', {
-                title: 'ข้อมูลเกี่ยวกับหมวดหมู่สินค้า' ,
-                id: 'cat-update-form-main',
+                title: 'ข้อมูลเกี่ยวกับหน่วยเบิก' ,
+                id: 'unitcount-add-form-main',
 
-                url: '/category/' + id,
+                url: '/unit_count/' + id,
                 method: 'put',
 
                 bodyPadding: 20,
@@ -224,22 +195,8 @@ var updateCategories = function(id, name, cat_type) {
                 items: [
                     {
                         xtype: 'textfield',
-                        fieldLabel: 'ชื่อหมวดหมู่สินค้า',
                         name: 'name',
-                        id: 'txt-cat-update-cat-name',
-                        allowBlank: false
-                    },
-                    {
-                        xtype: 'combo',
-                        store: 'CategoriesTypesStore',
-                        id: 'cob-cat-update-cat-type',
-                        fieldLabel: 'ประเภทหมวดหมู่',
-                        displayField: 'name',
-                        valueField: 'id',
-                        queryMode: 'local',
-                        editable: false,
-                        typeAhead: false,
-                        name: 'categories_type_id',
+                        id: 'unitcount-update-name',
                         allowBlank: false
                     }
 
@@ -248,18 +205,11 @@ var updateCategories = function(id, name, cat_type) {
         ]
     } );
 
-    var extcat_name = Ext.getCmp('txt-cat-update-cat-name'),
-    //extcat_id = Ext.getCmp('txt-cat-update-cat-id'),
-    extcat_type = Ext.getCmp('cob-cat-update-cat-type');
+    Ext.getCmp('unitcount-update-name').setValue(name);
+    winUpdateUnitCount.show();
 
-    //extcat_id.setValue(id);
-    extcat_name.setValue(name);
-    extcat_type.setValue(cat_type);
-
-    winUpdateCategory.show();
-}
-// Delete category
-var deleteCategory = function(id, name) {
+}//update unitcount
+var deleteUnitCount = function(id, name) {
     Ext.Msg.show({
         title: 'ยืนยันการลบรายการ',
         msg: 'คุณต้องการลบรายการที่เลือกหรือไม่? [' + name + ']',
@@ -271,13 +221,13 @@ var deleteCategory = function(id, name) {
         fn: function(btn){
             if(btn == 'yes'){
                 Ext.Ajax.request({
-                    url: '/category/' + id,
+                    url: '/unit_count/' + id,
                     method: 'delete',
                     success: function(resp) {
                         var resp = resp.responseText;
                         if(resp == 'ok'){
                             Ext.Msg.alert('ผลการลบ','ลบรายการเรียบร้อยแล้ว.');
-                            CategoriesStore.load();
+                            UnitCountStore.load();
                         }else{
                             Ext.Msg.alert('ผลการลบ', resp);
                         }
@@ -287,89 +237,75 @@ var deleteCategory = function(id, name) {
         },
         icons: Ext.Msg.QUESTION
     })
-}//deleteCategory
-Ext.define('CloudHIS.view.basic.CategoriesGrid', {
+}//deleteUnitCount
+Ext.define('CloudHIS.view.basic.UnitCountGrid', {
     extend: 'CloudHIS.view.Container',
 
     items: [
 	{
 	    xtype: 'grid',
-	    title: 'รายการหมวดหมู่สินค้า',
-	    id: 'cat_grid_main',
-
+	    title: 'รายชื่อหน่วยนับ',
+        id: 'unitcount-main-grid',
         //iconCls: 'list',
 	    width: 680,
 	    height: 400,
 	    frame: true,
 	    margin: 5,
 
-	    store: CategoriesStore,
+	    store: UnitCountStore,
 	    columns: [
-		{xtype: 'rownumberer', text: 'ลำดับ'},
-		{
-            text: 'ชื่อหมวดหมู่' ,flex: 1, dataIndex: 'name'
-        },
-		{
-            text: 'ประเภทหมวดหมู่' ,flex: 1, dataIndex: 'categories_type_name'
-            /*,
-            renderer: function(value) {
-                var combo = Ext.getCmp('xxxxx');
-                var record = combo.findRecordByValue(value);
-                return record.get(combo.displayField);
-            }
-            */
-        },
-        {
-            text: 'cat_type_id', dataIndex: 'categories_type_id', hidden: true
-        },
             {
-            text: 'categories_id', dataIndex: 'id', hidden: true
-        }
+                xtype: 'rownumberer', text: 'ลำดับ'},
+            {
+                text: 'ชื่อหน่วยนับ' ,flex: 1, dataIndex: 'name'
+            }
 	    ],
 	    tbar: [
 
             {
                 text: 'เพิ่มรายการ',
                 iconCls:'add',
-                handler: addCategories
+                handler: addUnitCount
             },'-',
             {
                 text: 'ยกเลิกรายการ',
                 iconCls:'close',
                 handler: function() {
-                    var grid = Ext.getCmp('cat_grid_main'),
+                    var grid = Ext.getCmp('unitcount-main-grid'),
                         sm = grid.getSelectionModel(),
                         sl = sm.selected.get(0),
 
                         name = sl.data.name,
                         id = sl.data.id;
 
-                    if(name.length == 0){
-                        Ext.Msg.alert('ข้อมูลไม่สมบูรณ์', 'กรุณาเลือกรายการที่ต้องการยกเลิก');
-                    }else{
-                        deleteCategory(id, name);
-                    }
+                    deleteUnitCount(id, name);
                 }
             },'-',
             {
                 text: 'แก้ไขรายการ',
-                iconCls:'edit'
-            },'-',
-            {
-                text: 'พิมพ์รายการ',
-                iconCls:'print'
+                iconCls:'edit',
+                handler: function(){
+                    var grid = Ext.getCmp('unitcount-main-grid'),
+                        sm = grid.getSelectionModel(),
+                        sl = sm.selected.get(0),
+
+                        name = sl.data.name,
+                        id = sl.data.id;
+
+                    updateUnitCount(id, name);
+                }
             }
 	    ],
-	    listeners: {
-		itemdblclick: function(grid, record){
+        listeners: {
+			itemdblclick: function(grid, record){
 		    //console.log(record.get('id'));
             var id = record.get('id'),
-                name = record.get('name'),
-                cat_type = record.get('categories_type_id');
+                name = record.get('name');
 
-            updateCategories(id, name, cat_type);
-		}
-	    }
-	}
+            updateUnitCount(id, name);
+
+	        }
+        }
+    }
     ]
 });

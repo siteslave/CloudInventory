@@ -41,6 +41,11 @@ Ext.define('CloudHIS.view.tree.ServiceTree', {
                     this.setActiveItem(className, title);
 
                     break;
+                case 'svTreeUnitCount':
+                    className = 'CloudHIS.view.basic.UnitCountGrid';
+                    this.setActiveItem(className, title);
+
+                    break;
             }
 
         }
