@@ -1,5 +1,7 @@
 class CategoryController < ApplicationController
   # POST  /category
+  # @name string
+  # @type int
   def create
 
     c = Category.find_by_name(params[:name])
@@ -84,15 +86,5 @@ class CategoryController < ApplicationController
 
     render :json => {:success => true, :rows => @category}
 
-  end
-
-  def destroy
-    begin
-      @category = Category.find(params[:id])
-      @category.destroy
-      render :text => 'ok'
-    rescue Exception => e
-      render :text => e
-    end
   end
 end

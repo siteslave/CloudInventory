@@ -5,15 +5,14 @@
 Ext.require(
 	'Ext.window.*'
 );
-//Ext.data.StoreManager.lookup('simpsonsStore')
-var DepartmentStore = Ext.create('CloudHIS.store.DepartmentsStore');
 
-DepartmentStore.load();
+var CategoriesStore = Ext.create('CloudHIS.store.CategoryListStore');
 
-var addDepartment = function() {
+// Add category.
+var addCategories = function() {
 
-    var winAddDepartment = Ext.create( 'Ext.window.Window', {
-        title: 'เพิ่มหมวดหน่วยเบิก',
+    var winAddCategory = Ext.create( 'Ext.window.Window', {
+        title: 'เพิ่มหมวดหมู่สินค้า',
         width: 460,
         //height: 300,
         modal: true,
@@ -25,7 +24,7 @@ var addDepartment = function() {
                 text: 'บันทึก',
                 iconCls: 'add',
                 handler: function() {
-                    var frmAdd = Ext.getCmp('dep-add-form-main').getForm();
+                    var frmAdd = Ext.getCmp('cat-add-form-main').getForm();
 
                         frmAdd.submit({
 
@@ -39,10 +38,9 @@ var addDepartment = function() {
                                 });
 
                                 frmAdd.reset();
-                                DepartmentStore.load();
-
-                                winAddDepartment.destroy();
-
+                                
+                                winAddCategory.close();
+                                CategoriesStore.load();
 
                             },
 
@@ -79,16 +77,16 @@ var addDepartment = function() {
                 text: 'ปิดหน้าต่าง',
                 iconCls: 'close',
                 handler: function() {
-                    winAddDepartment.destroy();
+                    winAddCategory.destroy();
                 }
             }
         ],
         items: [
             new Ext.create('Ext.form.Panel', {
-                title: 'ข้อมูลเกี่ยวกับหน่วยเบิก' ,
-                id: 'dep-add-form-main',
+                title: 'ข้อมูลเกี่ยวกับหมวดหมู่สินค้า' ,
+                id: 'cat-add-form-main',
 
-                url: '/department',
+                url: '/category',
                 method: 'post',
 
                 bodyPadding: 20,
@@ -99,22 +97,38 @@ var addDepartment = function() {
                 items: [
                     {
                         xtype: 'textfield',
-                        fieldLabel: 'ชื่อหน่วยเบิก',
+                        fieldLabel: 'ชื่อหมวดหมู่สินค้า',
+                        placeholder: 'พิมพ์ชื่อหมวดหมู่สินค้า',
                         name: 'name',
                         allowBlank: false
+                    },
+                    {
+                        xtype: 'combo',
+                        store: 'CategoriesTypesStore',
+                        fieldLabel: 'ประเภทหมวดหมู่',
+                        displayField: 'name',
+                        valueField: 'id',
+                        queryMode: 'local',
+                        editable: false,
+                        typeAhead: false,
+                        name: 'categories_type_id',
+                        allowBlank: false
                     }
+
                 ]
             })
         ]
     } );
+    //load store.
+    CategoriesStore.load();
+		//open window
+    winAddCategory.show();
+}
+// update category.
+var updateCategories = function(id, name, cat_type) {
 
-    winAddDepartment.show();
-}//addDepartment
-//update department 
-var updateDepartment = function(id, name) {
-
-    var winUpdateDepartment = Ext.create( 'Ext.window.Window', {
-        title: 'เพิ่มหมวดหน่วยเบิก',
+    var winUpdateCategory = Ext.create( 'Ext.window.Window', {
+        title: 'แก้ไขหมวดหมู่สินค้า',
         width: 460,
         //height: 300,
         modal: true,
@@ -126,9 +140,14 @@ var updateDepartment = function(id, name) {
                 text: 'บันทึก',
                 iconCls: 'add',
                 handler: function() {
-                    var frmAdd = Ext.getCmp('dep-add-form-main').getForm();
+                /*
+                var Category = Ext.ModelMgr.getModel('CloudHIS.model.CategoryModel');
+                */
+                
 
-                        frmAdd.submit({
+                    var frmUpdate = Ext.getCmp('cat-update-form-main').getForm();
+
+                        frmUpdate.submit({
 
                             success: function(f, a) {
 
@@ -138,12 +157,16 @@ var updateDepartment = function(id, name) {
                                     buttons: Ext.Msg.OK,
                                     icons: Ext.Msg.INFO
                                 });
+                                
+                                
+                                //var store = Ext.create('CloudHIS.store.CategoryListStore');
+                                
+                                
+                                
+                                frmUpdate.reset();
+                                winUpdateCategory.destroy();
+                                CategoriesStore.load();
 
-                                frmAdd.reset();
-                                DepartmentStore.load();
-                                
-                                winUpdateDepartment.destroy();
-                                
                             },
 
                             failure: function(f, a) {
@@ -168,6 +191,7 @@ var updateDepartment = function(id, name) {
                                 });
                             }
                         });
+                        
 
                 }
             },
@@ -175,16 +199,16 @@ var updateDepartment = function(id, name) {
                 text: 'ปิดหน้าต่าง',
                 iconCls: 'close',
                 handler: function() {
-                    winUpdateDepartment.destroy();
+                    winUpdateCategory.destroy();
                 }
             }
         ],
         items: [
             new Ext.create('Ext.form.Panel', {
-                title: 'ข้อมูลเกี่ยวกับหน่วยเบิก' ,
-                id: 'dep-add-form-main',
+                title: 'ข้อมูลเกี่ยวกับหมวดหมู่สินค้า' ,
+                id: 'cat-update-form-main',
 
-                url: '/department/' + id,
+                url: '/category/' + id,
                 method: 'put',
 
                 bodyPadding: 20,
@@ -195,8 +219,22 @@ var updateDepartment = function(id, name) {
                 items: [
                     {
                         xtype: 'textfield',
+                        fieldLabel: 'ชื่อหมวดหมู่สินค้า',
                         name: 'name',
-                        id: 'dep-update-name',
+                        id: 'txt-cat-update-cat-name',
+                        allowBlank: false
+                    },
+                    {
+                        xtype: 'combo',
+                        store: 'CategoriesTypesStore',
+                        id: 'cob-cat-update-cat-type',
+                        fieldLabel: 'ประเภทหมวดหมู่',
+                        displayField: 'name',
+                        valueField: 'id',
+                        queryMode: 'local',
+                        editable: false,
+                        typeAhead: false,
+                        name: 'categories_type_id',
                         allowBlank: false
                     }
 
@@ -204,106 +242,85 @@ var updateDepartment = function(id, name) {
             })
         ]
     } );
-		Ext.getCmp('dep-update-name').setValue(name);
-    winUpdateDepartment.show();
-}//update department
-var deleteDepartment = function(id, name) {
-    Ext.Msg.show({
-        title: 'ยืนยันการลบรายการ',
-        msg: 'คุณต้องการลบรายการที่เลือกหรือไม่? [' + name + ']',
-        buttonText: {
-            yes: 'ใช่',
-            no: 'ไม่ใช่'
-        },
-        waitMsg: 'กำลังลบข้อมูล...',
-        fn: function(btn){
-            if(btn == 'yes'){
-                Ext.Ajax.request({
-                    url: '/department/' + id,
-                    method: 'delete',
-                    success: function(resp) {
-                        var resp = resp.responseText;
-                        if(resp == 'ok'){
-                            Ext.Msg.alert('ผลการลบ','ลบรายการเรียบร้อยแล้ว.');
-                            DepartmentStore.load();
-                        }else{
-                            Ext.Msg.alert('ผลการลบ', resp);
-                        }
-                    }
-                });
-            }
-        },
-        icons: Ext.Msg.QUESTION
-    })
-}//deleteDepartment
-Ext.define('CloudHIS.view.basic.DepartmentsGrid', {
+
+    var extcat_name = Ext.getCmp('txt-cat-update-cat-name'),
+    //extcat_id = Ext.getCmp('txt-cat-update-cat-id'),
+    extcat_type = Ext.getCmp('cob-cat-update-cat-type');
+
+    //extcat_id.setValue(id);
+    extcat_name.setValue(name);
+    extcat_type.setValue(cat_type);
+
+    winUpdateCategory.show();
+}
+
+Ext.define('CloudHIS.view.basic.CategoriesGrid', {
     extend: 'CloudHIS.view.Container',
 
     items: [
 	{
 	    xtype: 'grid',
-	    title: 'รายชื่อแผนก',
-        id: 'dep-main-grid',
+	    title: 'รายการหมวดหมู่สินค้า',
+	    id: 'cat_grid_main',
         //iconCls: 'list',
 	    width: 680,
 	    height: 400,
 	    frame: true,
 	    margin: 5,
 
-	    store: DepartmentStore,
+	    store: CategoriesStore,
 	    columns: [
-            {
-                xtype: 'rownumberer', text: 'ลำดับ'},
-            {
-                text: 'ชื่อแผนก' ,flex: 1, dataIndex: 'name'
+		{xtype: 'rownumberer', text: 'ลำดับ'},
+		{
+            text: 'ชื่อหมวดหมู่' ,flex: 1, dataIndex: 'name'
+        },
+		{
+            text: 'ประเภทหมวดหมู่' ,flex: 1, dataIndex: 'categories_type_name'
+            /*,
+            renderer: function(value) {
+                var combo = Ext.getCmp('xxxxx');
+                var record = combo.findRecordByValue(value);
+                return record.get(combo.displayField);
             }
+            */
+        },
+        {
+            text: 'cat_type_id', dataIndex: 'categories_type_id', hidden: true
+        },
+            {
+            text: 'categories_id', dataIndex: 'id', hidden: true
+        }
 	    ],
 	    tbar: [
 
             {
                 text: 'เพิ่มรายการ',
                 iconCls:'add',
-                handler: addDepartment
+                handler: addCategories
             },'-',
             {
                 text: 'ยกเลิกรายการ',
-                iconCls:'close',
-                handler: function() {
-                    var grid = Ext.getCmp('dep-main-grid'),
-                        sm = grid.getSelectionModel(),
-                        sl = sm.selected.get(0),
-
-                        name = sl.data.name,
-                        id = sl.data.id;
-
-                    deleteDepartment(id, name);
-                }
+                iconCls:'close'
             },'-',
             {
                 text: 'แก้ไขรายการ',
-                iconCls:'edit',
-                handler: function(){
-                    var grid = Ext.getCmp('dep-main-grid'),
-                        sm = grid.getSelectionModel(),
-                        sl = sm.selected.get(0),
-
-                        name = sl.data.name,
-                        id = sl.data.id;
-
-                    updateDepartment(id, name);
-                }
+                iconCls:'edit'
+            },'-',
+            {
+                text: 'พิมพ์รายการ',
+                iconCls:'print'
             }
 	    ],
-        listeners: {
-			itemdblclick: function(grid, record){
+	    listeners: {
+		itemdblclick: function(grid, record){
 		    //console.log(record.get('id'));
             var id = record.get('id'),
-                name = record.get('name');
+                name = record.get('name'),
+                cat_type = record.get('categories_type_id');
 
-            updateDepartment(id, name);
-
-	        }
-        }
-    }
+            updateCategories(id, name, cat_type);
+		}
+	    }
+	}
     ]
 });

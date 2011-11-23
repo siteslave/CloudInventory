@@ -5,9 +5,12 @@
 Ext.require(
 	'Ext.window.*'
 );
-    /*
-     * Events listening.
-     */
+
+var CategoriesStore = Ext.create('CloudHIS.store.CategoryListStore');
+
+//load store.
+CategoriesStore.load();
+    
 // Add category.
 var addCategories = function() {
 
@@ -38,6 +41,9 @@ var addCategories = function() {
                                 });
 
                                 frmAdd.reset();
+                                
+                                winAddCategory.destroy();
+                                CategoriesStore.load();
 
                             },
 
@@ -83,7 +89,7 @@ var addCategories = function() {
                 title: 'ข้อมูลเกี่ยวกับหมวดหมู่สินค้า' ,
                 id: 'cat-add-form-main',
 
-                url: '/category/doregister',
+                url: '/category',
                 method: 'post',
 
                 bodyPadding: 20,
@@ -108,7 +114,7 @@ var addCategories = function() {
                         queryMode: 'local',
                         editable: false,
                         typeAhead: false,
-                        name: 'type',
+                        name: 'categories_type_id',
                         allowBlank: false
                     }
 
@@ -117,6 +123,7 @@ var addCategories = function() {
         ]
     } );
 
+		//open window
     winAddCategory.show();
 }
 // update category.
@@ -135,9 +142,14 @@ var updateCategories = function(id, name, cat_type) {
                 text: 'บันทึก',
                 iconCls: 'add',
                 handler: function() {
-                    var frmAdd = Ext.getCmp('cat-update-form-main').getForm();
+                /*
+                var Category = Ext.ModelMgr.getModel('CloudHIS.model.CategoryModel');
+                */
+                
 
-                        frmAdd.submit({
+                    var frmUpdate = Ext.getCmp('cat-update-form-main').getForm();
+
+                        frmUpdate.submit({
 
                             success: function(f, a) {
 
@@ -147,8 +159,15 @@ var updateCategories = function(id, name, cat_type) {
                                     buttons: Ext.Msg.OK,
                                     icons: Ext.Msg.INFO
                                 });
-
-                                frmAdd.reset();
+                                
+                                
+                                //var store = Ext.create('CloudHIS.store.CategoryListStore');
+                                
+                                
+                                
+                                frmUpdate.reset();
+                                winUpdateCategory.destroy();
+                                CategoriesStore.load();
 
                             },
 
@@ -174,12 +193,9 @@ var updateCategories = function(id, name, cat_type) {
                                 });
                             }
                         });
+                        
 
                 }
-            },
-            {
-                text: 'ยกเลิก',
-                iconCls: 'refresh'
             },
             {
                 text: 'ปิดหน้าต่าง',
@@ -194,7 +210,7 @@ var updateCategories = function(id, name, cat_type) {
                 title: 'ข้อมูลเกี่ยวกับหมวดหมู่สินค้า' ,
                 id: 'cat-update-form-main',
 
-                url: '/category',
+                url: '/category/' + id,
                 method: 'put',
 
                 bodyPadding: 20,
@@ -203,12 +219,6 @@ var updateCategories = function(id, name, cat_type) {
                     labelAlign: 'top'
                 },
                 items: [
-                    {
-                        xtype: 'textfield',
-                        readOnly: true,
-                        id: 'txt-cat-update-cat-id',
-                        name: 'id'
-                    },
                     {
                         xtype: 'textfield',
                         fieldLabel: 'ชื่อหมวดหมู่สินค้า',
@@ -226,7 +236,7 @@ var updateCategories = function(id, name, cat_type) {
                         queryMode: 'local',
                         editable: false,
                         typeAhead: false,
-                        name: 'type',
+                        name: 'categories_type_id',
                         allowBlank: false
                     }
 
@@ -236,16 +246,45 @@ var updateCategories = function(id, name, cat_type) {
     } );
 
     var extcat_name = Ext.getCmp('txt-cat-update-cat-name'),
-    extcat_id = Ext.getCmp('txt-cat-update-cat-id'),
+    //extcat_id = Ext.getCmp('txt-cat-update-cat-id'),
     extcat_type = Ext.getCmp('cob-cat-update-cat-type');
 
-    extcat_id.setValue(id);
+    //extcat_id.setValue(id);
     extcat_name.setValue(name);
     extcat_type.setValue(cat_type);
 
     winUpdateCategory.show();
 }
-
+// Delete category
+var deleteCategory = function(id, name) {
+    Ext.Msg.show({
+        title: 'ยืนยันการลบรายการ',
+        msg: 'คุณต้องการลบรายการที่เลือกหรือไม่? [' + name + ']',
+        buttonText: {
+            yes: 'ใช่',
+            no: 'ไม่ใช่'
+        },
+        waitMsg: 'กำลังลบข้อมูล...',
+        fn: function(btn){
+            if(btn == 'yes'){
+                Ext.Ajax.request({
+                    url: '/category/' + id,
+                    method: 'delete',
+                    success: function(resp) {
+                        var resp = resp.responseText;
+                        if(resp == 'ok'){
+                            Ext.Msg.alert('ผลการลบ','ลบรายการเรียบร้อยแล้ว.');
+                            CategoriesStore.load();
+                        }else{
+                            Ext.Msg.alert('ผลการลบ', resp);
+                        }
+                    }
+                });
+            }
+        },
+        icons: Ext.Msg.QUESTION
+    })
+}//deleteCategory
 Ext.define('CloudHIS.view.basic.CategoriesGrid', {
     extend: 'CloudHIS.view.Container',
 
@@ -253,13 +292,15 @@ Ext.define('CloudHIS.view.basic.CategoriesGrid', {
 	{
 	    xtype: 'grid',
 	    title: 'รายการหมวดหมู่สินค้า',
+	    id: 'cat_grid_main',
+
         //iconCls: 'list',
 	    width: 680,
 	    height: 400,
 	    frame: true,
 	    margin: 5,
 
-	    store: 'CategoryListStore',
+	    store: CategoriesStore,
 	    columns: [
 		{xtype: 'rownumberer', text: 'ลำดับ'},
 		{
@@ -291,7 +332,21 @@ Ext.define('CloudHIS.view.basic.CategoriesGrid', {
             },'-',
             {
                 text: 'ยกเลิกรายการ',
-                iconCls:'close'
+                iconCls:'close',
+                handler: function() {
+                    var grid = Ext.getCmp('cat_grid_main'),
+                        sm = grid.getSelectionModel(),
+                        sl = sm.selected.get(0),
+
+                        name = sl.data.name,
+                        id = sl.data.id;
+
+                    if(name.length == 0){
+                        Ext.Msg.alert('ข้อมูลไม่สมบูรณ์', 'กรุณาเลือกรายการที่ต้องการยกเลิก');
+                    }else{
+                        deleteCategory(id, name);
+                    }
+                }
             },'-',
             {
                 text: 'แก้ไขรายการ',

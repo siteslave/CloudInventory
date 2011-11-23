@@ -1,0 +1,20 @@
+var CategoriesStore = Ext.create('Ext.data.Store',{
+    model: 'CategoryModel',
+    storeId: 'CategoriesStore',
+    proxy: {
+        type: 'ajax',
+        noCache: false,
+        api: {
+            read: '/category',
+            update: '/category/update',
+            destroy: '/category/destroy'
+        },
+        reader: {
+            type: 'json',
+            root: 'categories',
+            successProperty: 'success'
+        }
+    },
+    autoLoad: true
+});
+

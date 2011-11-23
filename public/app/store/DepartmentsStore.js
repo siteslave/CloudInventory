@@ -1,6 +1,7 @@
 Ext.define('CloudHIS.store.DepartmentsStore', {
     extend: 'Ext.data.Store',
     model: 'CloudHIS.model.DepartmentsModel',
+    storeId: 'DepartmentsStore',
     proxy: {
         type: 'rest',
         noCache: false,

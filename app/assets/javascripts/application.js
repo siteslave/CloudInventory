@@ -1,5 +1,4 @@
 Ext.Loader.setConfig({ enabled: true });
-
 Ext.application({
     name: 'CloudHIS',
     appFolder: 'app',
