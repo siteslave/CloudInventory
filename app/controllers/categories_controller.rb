@@ -1,4 +1,4 @@
-class CategoryController < ApplicationController
+class CategoriesController < ApplicationController
   # POST  /category
   def create
 
@@ -44,10 +44,11 @@ class CategoryController < ApplicationController
         :categories_type_id => r.categories_type_id,
         :categories_type_name => r.categories_type.name
     }}
+
     respond_to do |format|
-      format.html { render :json => { :success => true, :categories => @rows } }
+      format.html { render :json => { :success => true, :rows => @rows } }
       format.xml  { render :xml => @category }
-      format.json { render :json => { :success => true, :categories => @rows } }
+      format.json { render :json => { :success => true, :rows => @rows } }
     end
 
   end
@@ -59,7 +60,7 @@ class CategoryController < ApplicationController
 
 		@category.name = params[:name]
 		@category.categories_type_id = params[:categories_type_id]
-		
+
     if @category.save
       render :json => { :success => true }
     else

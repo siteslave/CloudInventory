@@ -1,5 +1,13 @@
 CloudInventory::Application.routes.draw do
 
+  get "users/index"
+
+  get "users/create"
+
+  get "users/update"
+
+  get "users/destroy"
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
@@ -58,10 +66,11 @@ CloudInventory::Application.routes.draw do
   #match ':controller(/:action(.:format))'
   #match ':controller(/:action(/:id(.:format)))'
 
-  resources :category
+  resources :categories
   resources :categorytype
-  resources :department
+  resources :departments
   resources :unit_count
+  resources :users
 
   # RESTFul for products
   resources :products

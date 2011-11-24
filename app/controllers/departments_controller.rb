@@ -1,17 +1,17 @@
-class DepartmentController < ApplicationController
+class DepartmentsController < ApplicationController
   # Get department list
   # GET /department
   # GET /department.json
   def index
-    @departments = Departments.order('name DESC').all
+    @departments = Department.order('name DESC').all
 
     render :json => { :success => true, :rows => @departments }
   end
 
   def update
-    @department = Departments.find(params[:id])
+    @department = Department.find(params[:id])
     @department.name = params[:name];
-    
+
     if @department.save
       render :json => { :success => true }
     else
@@ -22,7 +22,7 @@ class DepartmentController < ApplicationController
   def destroy
 
     begin
-      @department = Departments.find(params[:id])
+      @department = Department.find(params[:id])
       @department.destroy
       render :text => 'ok'
     rescue Exception => e
@@ -34,7 +34,7 @@ class DepartmentController < ApplicationController
   end
   # POST  /department
   def create
-    @department = Departments.new
+    @department = Department.new
     @department.name = params[:name]
 
     if @department.save

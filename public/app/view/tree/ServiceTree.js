@@ -46,6 +46,11 @@ Ext.define('CloudHIS.view.tree.ServiceTree', {
                     this.setActiveItem(className, title);
 
                     break;
+                case 'svTreeUsers':
+                    className = 'CloudHIS.view.basic.UsersGrid';
+                    this.setActiveItem(className, title);
+
+                    break;
             }
 
         }

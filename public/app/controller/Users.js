@@ -1,17 +1,13 @@
 Ext.define('CloudHIS.controller.Users', {
    extend: 'Ext.app.Controller',
 
-   views: [
-      'user.List'           
+   models: [
+       'UsersModel'
+   ],
+   stores: [
+    'UsersStore'
    ],
    
    init: function() {
-      this.control({
-         'userlist': {
-            itemdblclick: function(grid, record) {
-               console.log(record.get('name'));
-            }
-         }   
-      });
    }
 });

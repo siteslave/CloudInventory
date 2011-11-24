@@ -6,7 +6,8 @@ Ext.application({
         'Main',
         'Departments',
         'Services',
-        'UnitCount'
+        'UnitCount',
+        'Users'
     ],
     launch: function() {
         Ext.create('CloudHIS.view.Viewport');
