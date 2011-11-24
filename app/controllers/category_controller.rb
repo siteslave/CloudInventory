@@ -36,7 +36,7 @@ class CategoryController < ApplicationController
   # GET /category.json
   # GET /category.xml
   def index
-    @category = Category.all
+    @category = Category.order('id DESC').all
     #
     @rows = @category.collect { |r| {
         :id => r.id,

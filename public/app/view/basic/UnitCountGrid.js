@@ -231,6 +231,12 @@ var deleteUnitCount = function(id, name) {
                         }else{
                             Ext.Msg.alert('ผลการลบ', resp);
                         }
+                    },
+                    failure: function(result, request) {
+                        Ext.Msg.alert(
+                            'เกิดข้อผิดพลาด',
+                            'Server error: ' + result.status + ' - ' + result.statusText
+                        );
                     }
                 });
             }
@@ -293,6 +299,13 @@ Ext.define('CloudHIS.view.basic.UnitCountGrid', {
                         id = sl.data.id;
 
                     updateUnitCount(id, name);
+                }
+            },'-',
+            {
+                text: 'Refresh',
+                iconCls: 'refresh',
+                handler: function() {
+                    UnitCountStore.load();
                 }
             }
 	    ],
