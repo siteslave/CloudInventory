@@ -71,6 +71,8 @@ CloudInventory::Application.routes.draw do
   resources :departments
   resources :unit_count
   resources :users
+  resources :companies
+  resources :receives
 
   # RESTFul for products
   resources :products

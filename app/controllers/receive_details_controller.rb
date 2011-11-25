@@ -1,0 +1,3 @@
+class ReceiveDetailsController < ApplicationController
+
+end

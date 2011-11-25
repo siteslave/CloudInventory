@@ -51,6 +51,21 @@ Ext.define('CloudHIS.view.tree.ServiceTree', {
                     this.setActiveItem(className, title);
 
                     break;
+                case 'svTreeProducts':
+                    className = 'CloudHIS.view.Products';
+                    this.setActiveItem(className, title);
+
+                    break;
+                case 'svTreeCompany':
+                    className = 'CloudHIS.view.basic.Company';
+                    this.setActiveItem(className, title);
+
+                    break;
+                case 'svTreeGetProducts':
+                    className = 'CloudHIS.view.services.ReceiveProducts';
+                    this.setActiveItem(className, title);
+
+                    break;
             }
 
         }

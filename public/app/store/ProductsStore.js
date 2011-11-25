@@ -1,11 +1,10 @@
-Ext.define('CloudHIS.store.CategoryListStore', {
+Ext.define('CloudHIS.store.ProductsStore', {
     extend: 'Ext.data.Store',
-    model: 'CloudHIS.model.CategoryModel',
-    storeId: 'CategoryListStore',
+    model: 'CloudHIS.model.ProductsModel',
     proxy: {
         type: 'rest',
         noCache: false,
-        url: '/categories',
+        url: '/products',
         reader: {
             type: 'json',
             root: 'rows',

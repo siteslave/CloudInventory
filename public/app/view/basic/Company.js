@@ -5,17 +5,17 @@
 Ext.require(
 	'Ext.window.*'
 );
-//Ext.data.StoreManager.lookup('simpsonsStore')
-var UsersStore = Ext.create('CloudHIS.store.UsersStore');
-var DepartmentStore = Ext.create('CloudHIS.store.DepartmentsStore');
 
-UsersStore.load();
-DepartmentStore.load();
+var CompanyStore = Ext.create('CloudHIS.store.CompanyStore');
 
-var addUsers = function() {
+//load store.
+CompanyStore.load();
+    
+// Add Company.
+var addCompany = function() {
 
-    var winaddUsers = Ext.create( 'Ext.window.Window', {
-        title: 'เพิ่มผู้ใช้งาน',
+    var winAddCompany = Ext.create( 'Ext.window.Window', {
+        title: 'เพิ่มบริษัท/ร้านค้า',
         width: 460,
         //height: 300,
         modal: true,
@@ -27,7 +27,7 @@ var addUsers = function() {
                 text: 'บันทึก',
                 iconCls: 'add',
                 handler: function() {
-                    var frmAdd = Ext.getCmp('users-add-form-main').getForm();
+                    var frmAdd = Ext.getCmp('company-add-form-main').getForm();
 
                         frmAdd.submit({
 
@@ -41,11 +41,9 @@ var addUsers = function() {
                                 });
 
                                 frmAdd.reset();
-                                UsersStore.load();
+                                CompanyStore.load();
 
-                                winaddUsers.destroy();
-
-
+                                winAddCompany.destroy();
                             },
 
                             failure: function(f, a) {
@@ -81,16 +79,16 @@ var addUsers = function() {
                 text: 'ปิดหน้าต่าง',
                 iconCls: 'close',
                 handler: function() {
-                    winaddUsers.destroy();
+                    winAddCompany.destroy();
                 }
             }
         ],
         items: [
             new Ext.create('Ext.form.Panel', {
-                title: 'ข้อมูลเกี่ยวกับผู้ใช้งาน' ,
-                id: 'users-add-form-main',
+                title: 'ข้อมูลเกี่ยวกับบริษัท/ร้านค้า' ,
+                id: 'company-add-form-main',
 
-                url: '/users',
+                url: '/companies',
                 method: 'post',
 
                 bodyPadding: 20,
@@ -101,58 +99,65 @@ var addUsers = function() {
                 items: [
                     {
                         xtype: 'textfield',
-                        fieldLabel: 'ชื่อ - สกุล',
-                        name: 'fullname',
+                        fieldLabel: 'ชื่อบริษัท',
+                        name: 'name',
                         allowBlank: false
                     },
                     {
                         xtype: 'textfield',
-                        fieldLabel: 'ชื่อผู้ใช้งาน (ภาษาอังกฤษ)',
-                        name: 'user_name',
+                        fieldLabel: 'ชื่อผู้ติดต่อ',
+                        name: 'contact_name',
+                        allowBlank: true
+                    },
+                    {
+                        xtype: 'textareafield',
+                        fieldLabel: 'ที่อยู่',
+                        name: 'address',
                         allowBlank: false
                     },
                     {
-                        xtype: 'textfield',
-                        fieldLabel: 'รหัสผ่าน',
-                        name: 'user_pass',
-                        allowBlank: false,
-                        minLength: 4
-                    },
-                    {
-                        xtype: 'combo',
-                        store: 'DepartmentsStore',
-                        fieldLabel: 'หน่วยงานสังกัด',
-                        displayField: 'name',
-                        valueField: 'id',
-                        queryMode: 'local',
-                        editable: false,
-                        typeAhead: false,
-                        allowBlank: false ,
-                        name: 'department_id'
+                        xtype: 'container',
+                        layout: 'hbox',
+                        items: [
+                            {
+                                xtype: 'textfield',
+                                name: 'telephone',
+                                fieldLabel: 'หมายเลขโทรศัพท์',
+                                width: 200
+                            },
+                            {
+                                xtype: 'textfield',
+                                name: 'fax',
+                                fieldLabel: 'หมายเลขแฟกซ์',
+                                width: 200
+                            }
+                        ]
                     }
+
                 ]
             })
         ]
     } );
 
-    winaddUsers.show();
-}//addUsers
-//update unitcount
-var updateUsers = function() {
+		//open window
+    winAddCompany.show();
+}
+// update Company.
+var updateCompany = function() {
 
-    var grid = Ext.getCmp('users-main-grid'),
-    sm = grid.getSelectionModel(),
-    sl = sm.selected.get(0);
+    var grid = Ext.getCmp('company_grid_main'),
+        sm = grid.getSelectionModel(),
+        sl = sm.selected.get(0),
 
-    var id = sl.data.id,
-    fullname = sl.data.fullname,
-    user_name = sl.data.user_name,
-    active = sl.data.active,
-    department_id = sl.data.department_id,
-    department_name = sl.data.department_name;
+        name = sl.data.name,
+        contact_name = sl.data.contact_name,
+        address = sl.data.address,
+        telephone = sl.data.telephone,
+        fax = sl.data.fax,
+        id = sl.data.id;
 
-    var winUpdateUsers = Ext.create( 'Ext.window.Window', {
-        title: 'แก้ไขผู้ใช้งาน',
+    var winUpdateCompany = Ext.create( 'Ext.window.Window', {
+        title: 'แก้ไขข้อมูลบริษัท/ร้านค้า',
         width: 460,
         //height: 300,
         modal: true,
@@ -164,9 +169,14 @@ var updateUsers = function() {
                 text: 'บันทึก',
                 iconCls: 'add',
                 handler: function() {
-                    var frmAdd = Ext.getCmp('users-update-form-main').getForm();
+                /*
+                var Category = Ext.ModelMgr.getModel('CloudHIS.model.CategoryModel');
+                */
+                
 
-                        frmAdd.submit({
+                    var frmUpdate = Ext.getCmp('company-update-form-main').getForm();
+
+                        frmUpdate.submit({
 
                             success: function(f, a) {
 
@@ -177,10 +187,9 @@ var updateUsers = function() {
                                     icons: Ext.Msg.INFO
                                 });
 
-                                frmAdd.reset();
-                                UsersStore.load();
-
-                                winUpdateUsers.destroy();
+                                frmUpdate.reset();
+                                winUpdateCompany.destroy();
+                                CompanyStore.load();
 
                             },
 
@@ -206,6 +215,7 @@ var updateUsers = function() {
                                 });
                             }
                         });
+                        
 
                 }
             },
@@ -213,16 +223,16 @@ var updateUsers = function() {
                 text: 'ปิดหน้าต่าง',
                 iconCls: 'close',
                 handler: function() {
-                    winUpdateUsers.destroy();
+                    winUpdateCompany.destroy();
                 }
             }
         ],
         items: [
             new Ext.create('Ext.form.Panel', {
-                title: 'ข้อมูลเกี่ยวกับผู้ใช้งาน' ,
-                id: 'users-update-form-main',
+                title: 'ข้อมูลเกี่ยวกับบริษัท/ร้านค้า' ,
+                id: 'company-update-form-main',
 
-                url: '/users/' + id,
+                url: '/companies/' + id,
                 method: 'put',
 
                 bodyPadding: 20,
@@ -233,61 +243,58 @@ var updateUsers = function() {
                 items: [
                     {
                         xtype: 'textfield',
-                        fieldLabel: 'ชื่อ - สกุล',
-                        name: 'fullname',
+                        fieldLabel: 'ชื่อบริษัท',
+                        name: 'name',
                         allowBlank: false,
-                        value: fullname
+                        value: name
                     },
                     {
                         xtype: 'textfield',
-                        fieldLabel: 'ชื่อผู้ใช้งาน (ภาษาอังกฤษ)',
-                        name: 'user_name',
-                        allowBlank: false,
-                        value: user_name
+                        fieldLabel: 'ชื่อผู้ติดต่อ',
+                        name: 'contact_name',
+                        allowBlank: true,
+                        value: contact_name
                     },
                     {
-                        xtype: 'combo',
-                        store: DepartmentStore,
-                        fieldLabel: 'หน่วยงานสังกัด',
-                        displayField: 'name',
-                        valueField: 'id',
-                        queryMode: 'local',
-                        editable: false,
-                        typeAhead: false,
+                        xtype: 'textareafield',
+                        fieldLabel: 'ที่อยู่',
+                        name: 'address',
                         allowBlank: false,
-                        name: 'department_id',
-                        value: department_id
+                        value: address
+                    },
+                    {
+                        xtype: 'container',
+                        layout: 'hbox',
+                        items: [
+                            {
+                                xtype: 'textfield',
+                                name: 'telephone',
+                                fieldLabel: 'หมายเลขโทรศัพท์',
+                                width: 200, value: telephone
+                            },
+                            {
+                                xtype: 'textfield',
+                                name: 'fax',
+                                fieldLabel: 'หมายเลขแฟกซ์',
+                                width: 200, value: fax
+                            }
+                        ]
                     }
 
                 ]
             })
         ]
     } );
-    /*
-    var idx = DepartmentStore.find('value',department_id);
-    DepartmentStore.getAt(idx).data.label
-    */
-    /*
-    var combo = Ext.getCmp('users-update-department');
-    // Get attached store
-    var store = combo.store;
 
-    // This is the trick
-    store.on("load", function(store, records, state, operation, opts) {
-        this.setValue(department_id);
-    });
-    */
-
-    winUpdateUsers.show();
-
-}//update unitcount
-var deleteUsers = function() {
-
-    var grid = Ext.getCmp('users-main-grid'),
+    winUpdateCompany.show();
+}
+// Delete company
+var deleteCompany = function() {
+    var grid = Ext.getCmp('company_grid_main'),
     sm = grid.getSelectionModel(),
     sl = sm.selected.get(0),
 
-    fullname = sl.data.fullname,
+    name = sl.data.name,
     id = sl.data.id;
 
     Ext.Msg.show({
@@ -301,96 +308,82 @@ var deleteUsers = function() {
         fn: function(btn){
             if(btn == 'yes'){
                 Ext.Ajax.request({
-                    url: '/users/' + id,
+                    url: '/companies/' + id,
                     method: 'delete',
                     success: function(resp) {
                         var resp = resp.responseText;
                         if(resp == 'ok'){
                             Ext.Msg.alert('ผลการลบ','ลบรายการเรียบร้อยแล้ว.');
-                            UnitCountStore.load();
+                            CompanyStore.load();
                         }else{
                             Ext.Msg.alert('ผลการลบ', resp);
                         }
-                    },
-                    failure: function(result, request) {
-                        Ext.Msg.alert(
-                            'เกิดข้อผิดพลาด',
-                            'Server error: ' + result.status + ' - ' + result.statusText
-                        );
                     }
                 });
             }
         },
         icons: Ext.Msg.QUESTION
     })
-}//deleteUsers
-Ext.define('CloudHIS.view.basic.UsersGrid', {
+}//deleteCompany
+Ext.define('CloudHIS.view.basic.Company', {
     extend: 'CloudHIS.view.Container',
 
     items: [
 	{
 	    xtype: 'grid',
-	    title: 'รายชื่อผู้ใช้งาน',
-        id: 'users-main-grid',
+	    title: 'รายการบริษัท/ร้านค้า',
+	    id: 'company_grid_main',
+
         //iconCls: 'list',
 	    width: 680,
 	    height: 400,
 	    frame: true,
 	    margin: 5,
 
-	    store: UsersStore,
+	    store: CompanyStore,
 	    columns: [
-            {
-                xtype: 'rownumberer', text: 'ลำดับ'
-            },
-            {
-                text: 'ชื่อ - สกุล' ,flex: 1, dataIndex: 'fullname'
-            },
-            {
-                text: 'ชื่อผู้ใช้งาน' ,flex: .7, dataIndex: 'user_name'
-            },
-            {
-                text: 'หน่วยงานสังกัด' ,flex: 1, dataIndex: 'department_name'
-            },
-            {
-                text: 'สถานะ' ,flex: .8, dataIndex: 'active',
-                renderer: function(value) {
-                    return value == 1 ? 'เปิดใช้งาน' : 'ระงับการใช้งาน'
-                }
-            },
-            {
-                text: 'ใช้งานล่าสุด', flex: 1, dataIndex: 'last_login',
-                renderer: Ext.util.Format.dateRenderer('d/m/Y H:i:s')
-            }
+		{xtype: 'rownumberer', text: 'ลำดับ'},
+		{
+            text: 'ชื่อบริษัท/ร้านค้า' ,flex: 1, dataIndex: 'name'
+        },
+		{
+            text: 'ชื่อผู้ติดต่อ' ,flex: 1, dataIndex: 'contact_name'
+        },
+        {
+            text: 'ที่อยู่', dataIndex: 'address'
+        },
+        {
+            text: 'โทรศัพท์', dataIndex: 'telephone'
+        },
+        {
+            text: 'แฟกซ์', dataIndex: 'fax'
+        }
 	    ],
 	    tbar: [
 
             {
                 text: 'เพิ่มรายการ',
                 iconCls:'add',
-                handler: addUsers
+                handler: addCompany
             },'-',
             {
                 text: 'ยกเลิกรายการ',
                 iconCls:'close',
-                handler: deleteUsers
+                handler: deleteCompany
             },'-',
             {
                 text: 'แก้ไขรายการ',
                 iconCls:'edit',
-                handler: updateUsers
+                handler: updateCompany
             },'-',
             {
-                text: 'Refresh',
-                iconCls: 'refresh',
-                handler: function() {
-                    UsersStore.load();
-                }
+                text: 'พิมพ์รายการ',
+                iconCls:'print'
             }
 	    ],
-        listeners: {
-			itemdblclick: updateUsers
-        }
-    }
+	    listeners: {
+		itemdblclick: updateCompany
+	    }
+	}
     ]
 });

@@ -5,7 +5,7 @@ Ext.define('CloudHIS.controller.Services', {
         'ServiceTreeStore',
         'Visit',
         'CategoriesTypesStore',
-        'CategoryListStore'
+        'CategoryStore'
     ],
     models: ['Visit'],
     requires: [],

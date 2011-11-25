@@ -9,11 +9,16 @@ Ext.define('CloudHIS.store.ServiceTreeStore', {
                 id: 'svTreePaidGet'
             },
             {
+                text: 'รับสินค้าเข้าคลัง', leaf: true,
+                id: 'svTreeGetProducts'
+            },
+            {
                 text: 'ประวัติการอนุมัติจ่าย', leaf: true
             },
             {
                 text: 'ทะเบียนคุม', leaf: true
             },
+            /*
             {
                 text: 'จัดซื้อ-จัดจ้าง', expanded: true,
                 children: [
@@ -30,7 +35,7 @@ Ext.define('CloudHIS.store.ServiceTreeStore', {
                         text: 'ใบตรวจรับพัสด/ใบตรวจรับงา', leaf: true
                     }
                 ]
-            },
+            }, */
             {
                 text: 'ทะเบียนบัญชีทรัพย์สินและค่าเสื่อม', explanded: false,
                 children: [
@@ -55,14 +60,15 @@ Ext.define('CloudHIS.store.ServiceTreeStore', {
                 ]
             },
             {
-                text: 'ข้อมูลพื้นฐาน', expanded: false,
+                text: 'ข้อมูลพื้นฐาน', expanded: true,
                 children: [
                     {
                         text: 'หมวดหมู่สินค้า', leaf: true,
                         id: 'svTreeProductCategory'
                     },
                     {
-                        text: 'รายการสินค้า', leaf: true
+                        text: 'รายการสินค้า', leaf: true,
+                        id: 'svTreeProducts'
                     },
                     {
                         text: 'หน่วยนับ', leaf: true,
@@ -77,7 +83,8 @@ Ext.define('CloudHIS.store.ServiceTreeStore', {
                         id: 'svTreeUsers'
                     },
                     {
-                        text: 'งบประมาณ', leaf: true
+                        text: 'บริษัท/ร้านค้า', leaf: true,
+                        id: 'svTreeCompany'
                     }
                 ]
             }

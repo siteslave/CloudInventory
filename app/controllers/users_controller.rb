@@ -54,12 +54,12 @@ class UsersController < ApplicationController
       @User.department_id = params[:department_id]
 
       if @User.save
-        render :text => 'ok'
+        render :json => { :success => true }
       else
-        render :text => 'Can not update record.'
+        render :json => { :success => false, :msg => @User.errors.to_json }
       end
     rescue ActiveRecord::RecordNotFound
-      render :text => 'Record not found'
+      render :json => { :success => true, :msg => 'Record not found' }
     end
 
   end

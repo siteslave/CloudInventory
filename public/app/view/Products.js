@@ -6,16 +6,19 @@ Ext.require(
 	'Ext.window.*'
 );
 //Ext.data.StoreManager.lookup('simpsonsStore')
-var UsersStore = Ext.create('CloudHIS.store.UsersStore');
-var DepartmentStore = Ext.create('CloudHIS.store.DepartmentsStore');
+var ProductsStore = Ext.create('CloudHIS.store.ProductsStore');
+var CategoryStore = Ext.create('CloudHIS.store.CategoryStore');
+var UnitCountStore = Ext.create('CloudHIS.store.UnitCountStore');
 
-UsersStore.load();
-DepartmentStore.load();
+// Load data store
+ProductsStore.load();
+CategoryStore.load();
+UnitCountStore.load();
 
-var addUsers = function() {
+var addProduct = function() {
 
-    var winaddUsers = Ext.create( 'Ext.window.Window', {
-        title: 'เพิ่มผู้ใช้งาน',
+    var winAddProduct = Ext.create( 'Ext.window.Window', {
+        title: 'เพิ่มสินค้าใหม่',
         width: 460,
         //height: 300,
         modal: true,
@@ -27,7 +30,7 @@ var addUsers = function() {
                 text: 'บันทึก',
                 iconCls: 'add',
                 handler: function() {
-                    var frmAdd = Ext.getCmp('users-add-form-main').getForm();
+                    var frmAdd = Ext.getCmp('product-add-form-main').getForm();
 
                         frmAdd.submit({
 
@@ -41,10 +44,9 @@ var addUsers = function() {
                                 });
 
                                 frmAdd.reset();
-                                UsersStore.load();
+                                ProductsStore.load();
 
-                                winaddUsers.destroy();
-
+                                winAddProduct.close();
 
                             },
 
@@ -81,16 +83,16 @@ var addUsers = function() {
                 text: 'ปิดหน้าต่าง',
                 iconCls: 'close',
                 handler: function() {
-                    winaddUsers.destroy();
+                    winAddProduct.destroy();
                 }
             }
         ],
         items: [
             new Ext.create('Ext.form.Panel', {
-                title: 'ข้อมูลเกี่ยวกับผู้ใช้งาน' ,
-                id: 'users-add-form-main',
+                title: 'ข้อมูลเกี่ยวกับสินค้า' ,
+                id: 'product-add-form-main',
 
-                url: '/users',
+                url: '/products',
                 method: 'post',
 
                 bodyPadding: 20,
@@ -100,59 +102,92 @@ var addUsers = function() {
                 },
                 items: [
                     {
-                        xtype: 'textfield',
-                        fieldLabel: 'ชื่อ - สกุล',
-                        name: 'fullname',
-                        allowBlank: false
+                        xtype: 'container',
+                        layout: 'hbox',
+                        items: [
+                            {
+                                xtype: 'textfield',
+                                fieldLabel: 'รหัสสินค้า',
+                                name: 'fullname',
+                                allowBlank: false,
+                                width: 100, name: 'code'
+                            },
+                            {
+                                xtype: 'textfield',
+                                fieldLabel: 'ชื่อสินค้า',
+                                name: 'name',
+                                allowBlank: false,
+                                width: 310
+                            }
+                        ]
                     },
                     {
-                        xtype: 'textfield',
-                        fieldLabel: 'ชื่อผู้ใช้งาน (ภาษาอังกฤษ)',
-                        name: 'user_name',
-                        allowBlank: false
-                    },
-                    {
-                        xtype: 'textfield',
-                        fieldLabel: 'รหัสผ่าน',
-                        name: 'user_pass',
-                        allowBlank: false,
-                        minLength: 4
+                        xtype: 'container',
+                        layout: 'hbox',
+                        items: [
+                            {
+                                xtype: 'numberfield',
+                                name: 'price',
+                                fieldLabel: 'ราคา', width: 100,
+                                allowBlank: false
+                            },
+                            {
+                                xtype: 'numberfield',
+                                name: 'qty',
+                                fieldLabel: 'จำนวน',
+                                value: '0',
+                                readOnly: true, width: 100
+                            },
+                            {
+                                xtype: 'combo',
+                                store: UnitCountStore,
+                                fieldLabel: 'หน่วยเรียก',
+                                displayField: 'name',
+                                valueField: 'id',
+                                queryMode: 'local',
+                                editable: false,
+                                typeAhead: false,
+                                allowBlank: false ,
+                                name: 'unit_count_id', width: 210
+                            }
+                        ]
                     },
                     {
                         xtype: 'combo',
-                        store: 'DepartmentsStore',
-                        fieldLabel: 'หน่วยงานสังกัด',
+                        store: CategoryStore,
+                        fieldLabel: 'หมวดหมู่สินค้า',
                         displayField: 'name',
                         valueField: 'id',
                         queryMode: 'local',
                         editable: false,
                         typeAhead: false,
                         allowBlank: false ,
-                        name: 'department_id'
+                        name: 'category_id',
+                        width: 410
                     }
                 ]
             })
         ]
     } );
 
-    winaddUsers.show();
-}//addUsers
-//update unitcount
-var updateUsers = function() {
+    winAddProduct.show();
+}//addProduct
+//update Product
+var updateProduct = function() {
+    var grid = Ext.getCmp('product-main-grid'),
+                sm = grid.getSelectionModel(),
+                sl = sm.selected.get(0),
 
-    var grid = Ext.getCmp('users-main-grid'),
-    sm = grid.getSelectionModel(),
-    sl = sm.selected.get(0);
+                id = sl.data.id,
+                name = sl.data.name,
+                code = sl.data.code,
+                qty = sl.data.qty,
+                price = sl.data.price,
+                unit_count_id = sl.data.unit_count_id,
+                category_id = sl.data.category_id;
 
-    var id = sl.data.id,
-    fullname = sl.data.fullname,
-    user_name = sl.data.user_name,
-    active = sl.data.active,
-    department_id = sl.data.department_id,
-    department_name = sl.data.department_name;
-
-    var winUpdateUsers = Ext.create( 'Ext.window.Window', {
-        title: 'แก้ไขผู้ใช้งาน',
+    var winUpdateProduct = Ext.create( 'Ext.window.Window', {
+        title: 'แก้ไขข้อมูลสินค้า',
         width: 460,
         //height: 300,
         modal: true,
@@ -164,7 +199,7 @@ var updateUsers = function() {
                 text: 'บันทึก',
                 iconCls: 'add',
                 handler: function() {
-                    var frmAdd = Ext.getCmp('users-update-form-main').getForm();
+                    var frmAdd = Ext.getCmp('product-update-form-main').getForm();
 
                         frmAdd.submit({
 
@@ -178,9 +213,9 @@ var updateUsers = function() {
                                 });
 
                                 frmAdd.reset();
-                                UsersStore.load();
+                                ProductsStore.load();
 
-                                winUpdateUsers.destroy();
+                                winUpdateProduct.destroy();
 
                             },
 
@@ -213,16 +248,16 @@ var updateUsers = function() {
                 text: 'ปิดหน้าต่าง',
                 iconCls: 'close',
                 handler: function() {
-                    winUpdateUsers.destroy();
+                    winUpdateProduct.destroy();
                 }
             }
         ],
         items: [
             new Ext.create('Ext.form.Panel', {
-                title: 'ข้อมูลเกี่ยวกับผู้ใช้งาน' ,
-                id: 'users-update-form-main',
+                title: 'ข้อมูลเกี่ยวกับสินค้า' ,
+                id: 'product-update-form-main',
 
-                url: '/users/' + id,
+                url: '/products/' + id,
                 method: 'put',
 
                 bodyPadding: 20,
@@ -232,33 +267,75 @@ var updateUsers = function() {
                 },
                 items: [
                     {
-                        xtype: 'textfield',
-                        fieldLabel: 'ชื่อ - สกุล',
-                        name: 'fullname',
-                        allowBlank: false,
-                        value: fullname
+                        xtype: 'container',
+                        layout: 'hbox',
+                        items: [
+                            {
+                                xtype: 'textfield',
+                                fieldLabel: 'รหัสสินค้า',
+                                name: 'fullname',
+                                allowBlank: false,
+                                width: 100,
+                                value: code,
+                                readOnly: true,
+                                name: 'code'
+                            },
+                            {
+                                xtype: 'textfield',
+                                fieldLabel: 'ชื่อสินค้า',
+                                name: 'name',
+                                allowBlank: false,
+                                width: 310,
+                                value: name
+                            }
+                        ]
                     },
                     {
-                        xtype: 'textfield',
-                        fieldLabel: 'ชื่อผู้ใช้งาน (ภาษาอังกฤษ)',
-                        name: 'user_name',
-                        allowBlank: false,
-                        value: user_name
+                        xtype: 'container',
+                        layout: 'hbox',
+                        items: [
+                            {
+                                xtype: 'numberfield',
+                                name: 'price',
+                                fieldLabel: 'ราคา', width: 100,
+                                allowBlank: false,
+                                value: price
+                            },
+                            {
+                                xtype: 'numberfield',
+                                name: 'qty',
+                                fieldLabel: 'จำนวน',
+                                value: qty,
+                                readOnly: true, width: 100
+                            },
+                            {
+                                xtype: 'combo',
+                                store: UnitCountStore,
+                                fieldLabel: 'หน่วยเรียก',
+                                displayField: 'name',
+                                valueField: 'id',
+                                queryMode: 'local',
+                                editable: false,
+                                typeAhead: false,
+                                allowBlank: false ,
+                                name: 'unit_count_id', width: 210,
+                                value: unit_count_id
+                            }
+                        ]
                     },
                     {
                         xtype: 'combo',
-                        store: DepartmentStore,
-                        fieldLabel: 'หน่วยงานสังกัด',
+                        store: CategoryStore,
+                        fieldLabel: 'หมวดหมู่สินค้า',
                         displayField: 'name',
                         valueField: 'id',
                         queryMode: 'local',
                         editable: false,
                         typeAhead: false,
-                        allowBlank: false,
-                        name: 'department_id',
-                        value: department_id
+                        allowBlank: false ,
+                        name: 'category_id',
+                        width: 410, value: category_id
                     }
-
                 ]
             })
         ]
@@ -278,16 +355,16 @@ var updateUsers = function() {
     });
     */
 
-    winUpdateUsers.show();
+    winUpdateProduct.show();
 
-}//update unitcount
-var deleteUsers = function() {
+}//update Product
+var deleteProduct = function() {
 
-    var grid = Ext.getCmp('users-main-grid'),
+    var grid = Ext.getCmp('product-main-grid'),
     sm = grid.getSelectionModel(),
     sl = sm.selected.get(0),
 
-    fullname = sl.data.fullname,
+    name = sl.data.name,
     id = sl.data.id;
 
     Ext.Msg.show({
@@ -301,7 +378,7 @@ var deleteUsers = function() {
         fn: function(btn){
             if(btn == 'yes'){
                 Ext.Ajax.request({
-                    url: '/users/' + id,
+                    url: '/products/' + id,
                     method: 'delete',
                     success: function(resp) {
                         var resp = resp.responseText;
@@ -323,44 +400,49 @@ var deleteUsers = function() {
         },
         icons: Ext.Msg.QUESTION
     })
-}//deleteUsers
-Ext.define('CloudHIS.view.basic.UsersGrid', {
+}//deleteProduct
+
+// Show stockcard
+var showStockCard = function() {
+    Ext.Msg.alert('Show stock card', 'Show stock card window.');
+}// showStockCard
+
+Ext.define('CloudHIS.view.Products', {
     extend: 'CloudHIS.view.Container',
 
     items: [
 	{
 	    xtype: 'grid',
-	    title: 'รายชื่อผู้ใช้งาน',
-        id: 'users-main-grid',
+	    title: 'รายการสินค้าทั้งหมด',
+        id: 'product-main-grid',
         //iconCls: 'list',
 	    width: 680,
 	    height: 400,
 	    frame: true,
 	    margin: 5,
 
-	    store: UsersStore,
+	    store: ProductsStore,
 	    columns: [
             {
-                xtype: 'rownumberer', text: 'ลำดับ'
+                xtype: 'rownumberer', text: 'ลำดับ', flex: .3
             },
             {
-                text: 'ชื่อ - สกุล' ,flex: 1, dataIndex: 'fullname'
+                text: 'รหัสสินค้า' ,flex: 1, dataIndex: 'code'
             },
             {
-                text: 'ชื่อผู้ใช้งาน' ,flex: .7, dataIndex: 'user_name'
+                text: 'ชื่อสินค้า' ,flex: 2, dataIndex: 'name'
             },
             {
-                text: 'หน่วยงานสังกัด' ,flex: 1, dataIndex: 'department_name'
+                text: 'หน่วย' ,flex: .8, dataIndex: 'unit_count_name'
             },
             {
-                text: 'สถานะ' ,flex: .8, dataIndex: 'active',
-                renderer: function(value) {
-                    return value == 1 ? 'เปิดใช้งาน' : 'ระงับการใช้งาน'
-                }
+                text: 'หมวดหมู่' ,flex: 1, dataIndex: 'category_name'
             },
             {
-                text: 'ใช้งานล่าสุด', flex: 1, dataIndex: 'last_login',
-                renderer: Ext.util.Format.dateRenderer('d/m/Y H:i:s')
+                text: 'ราคา', flex: .5, dataIndex: 'price'
+            },
+            {
+                text: 'คงเหลือ', flex: .5, dataIndex: 'qty'
             }
 	    ],
 	    tbar: [
@@ -368,28 +450,53 @@ Ext.define('CloudHIS.view.basic.UsersGrid', {
             {
                 text: 'เพิ่มรายการ',
                 iconCls:'add',
-                handler: addUsers
+                handler: addProduct
             },'-',
             {
                 text: 'ยกเลิกรายการ',
                 iconCls:'close',
-                handler: deleteUsers
+                handler: deleteProduct
             },'-',
             {
                 text: 'แก้ไขรายการ',
                 iconCls:'edit',
-                handler: updateUsers
+                handler: updateProduct
             },'-',
             {
                 text: 'Refresh',
                 iconCls: 'refresh',
                 handler: function() {
-                    UsersStore.load();
+                    ProductsStore.load();
                 }
             }
 	    ],
         listeners: {
-			itemdblclick: updateUsers
+			itemdblclick: updateProduct,
+            itemcontextmenu: function(grid, record, item, index, e, obj) {
+                e.stopEvent();
+                grid.getSelectionModel().selected.get(index);
+                if(!this.ctxProductMainGrid) {
+                    this.ctxProductMainGrid = new Ext.menu.Menu({
+                       items: [
+                           {
+                               text: 'แก้ไขรายการ',
+                               handler: updateProduct
+                           },
+                           {
+                               text: 'ลบรายการสินค้า',
+                               handler: deleteProduct
+                           },
+                           {
+                               text: 'ดูข้อมูล Stock Card',
+                               handler: showStockCard
+                           }
+                       ]
+                    });
+                }
+
+                var xy = e.getXY();
+                this.ctxProductMainGrid.showAt(xy);
+            }
         }
     }
     ]

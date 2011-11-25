@@ -6,14 +6,10 @@ Ext.require(
 	'Ext.window.*'
 );
 
-var CategoriesStore = Ext.create('CloudHIS.store.CategoryListStore');
+var CategoriesStore = Ext.create('CloudHIS.store.CategoryStore');
 
 //load store.
-CategoriesStore.load({
-    params: {
-        id: 1
-    }
-});
+CategoriesStore.load();
     
 // Add category.
 var addCategories = function() {
@@ -92,7 +88,7 @@ var addCategories = function() {
                 title: 'ข้อมูลเกี่ยวกับหมวดหมู่สินค้า' ,
                 id: 'cat-add-form-main',
 
-                url: '/category',
+                url: '/categories',
                 method: 'post',
 
                 bodyPadding: 20,
@@ -213,7 +209,7 @@ var updateCategories = function(id, name, cat_type) {
                 title: 'ข้อมูลเกี่ยวกับหมวดหมู่สินค้า' ,
                 id: 'cat-update-form-main',
 
-                url: '/category/' + id,
+                url: '/categories/' + id,
                 method: 'put',
 
                 bodyPadding: 20,
@@ -271,7 +267,7 @@ var deleteCategory = function(id, name) {
         fn: function(btn){
             if(btn == 'yes'){
                 Ext.Ajax.request({
-                    url: '/category/' + id,
+                    url: '/categories/' + id,
                     method: 'delete',
                     success: function(resp) {
                         var resp = resp.responseText;
