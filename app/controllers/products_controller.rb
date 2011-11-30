@@ -22,7 +22,6 @@ class ProductsController < ApplicationController
   # POST    /products
   def create
     @product = Product.new
-
     @product.name = params[:name]
     @product.price = params[:price]
     @product.code = params[:code]

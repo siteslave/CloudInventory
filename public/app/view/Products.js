@@ -108,7 +108,6 @@ var addProduct = function() {
                             {
                                 xtype: 'textfield',
                                 fieldLabel: 'รหัสสินค้า',
-                                name: 'fullname',
                                 allowBlank: false,
                                 width: 100, name: 'code'
                             },

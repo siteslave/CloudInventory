@@ -72,9 +72,22 @@ CloudInventory::Application.routes.draw do
   resources :unit_count
   resources :users
   resources :companies
-  resources :receives
+
+  resources :receive_details do
+    collection do
+      post 'list'
+      post 'cleartemp'
+      post 'save'
+    end
+  end
+
+  resources :receives do
+    collection do
+      get :sess
+    end
+  end
 
   # RESTFul for products
   resources :products
-  match 'products/:name' => 'products#search', :via => :get
+  #match 'products/:name' => 'products#search', :via => :get
 end

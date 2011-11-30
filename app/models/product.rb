@@ -4,4 +4,5 @@ class Product < ActiveRecord::Base
   belongs_to :unit_count
   belongs_to :category
   belongs_to :receive_detail
+  has_many :temp_product
 end

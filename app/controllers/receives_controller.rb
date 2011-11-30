@@ -6,7 +6,7 @@ class ReceivesController < ApplicationController
     @rows = @Receives.collect { |r| {
         :id => r.id,
         :receive_date => r.receive_date,
-        :receive_detail_id => r.receive_detail_id,
+        #:receive_detail_id => r.receive_detail_id,
         :company_id => r.company_id,
         :company_name => r.company.name,
         :total_price => r.receive_details.sum('price*qty'),
@@ -16,4 +16,13 @@ class ReceivesController < ApplicationController
     render :json => { :success => true, :rows => @rows }
 
   end
+
+  def sess
+    @sess = srand
+
+    #create new session
+    session[:recvId] = @sess
+    render :text => @sess
+  end
+
 end
