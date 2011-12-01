@@ -615,6 +615,7 @@ var winAddProductReceive = new Ext.create('Ext.window.Window', {
             Ext.getCmp('recvIdSession001').setValue('');
             Ext.getCmp('recvIdCodeReceives001').setValue('');
             Ext.getCmp('recvIdCompanyReceives001').clearValue();
+            Ext.getCmp('recvButtonCreateNewDocuments').setDisabled(false);
         },
         show: function() {
         	//load empty data
@@ -623,12 +624,12 @@ var winAddProductReceive = new Ext.create('Ext.window.Window', {
 			        sess: 'no'
 			    }
 			});
-			Ext.getCmp('recvIdDateReceives001').setDisabled(true)
-			Ext.getCmp('recvIdCompanyReceives001').setDisabled(true)
-			Ext.getCmp('recvIdCodeReceives001').setDisabled(true)
-			Ext.getCmp('recvButtonSaveReceivesProduct001').setDisabled(true)
-			Ext.getCmp('recvButtonCancelReceivesProduct001').setDisabled(true)
-			this.setDisabled(false);
+			Ext.getCmp('recvIdDateReceives001').setDisabled(true);
+			Ext.getCmp('recvIdCompanyReceives001').setDisabled(true);
+			Ext.getCmp('recvIdCodeReceives001').setDisabled(true);
+			Ext.getCmp('recvButtonSaveReceivesProduct001').setDisabled(true);
+			Ext.getCmp('recvButtonCancelReceivesProduct001').setDisabled(true);
+			Ext.getCmp('recvButtonCreateNewDocuments').setDisabled(false);
         }
     }
 });

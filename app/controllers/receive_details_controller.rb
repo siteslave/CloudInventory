@@ -125,6 +125,17 @@ class ReceiveDetailsController < ApplicationController
 					@rcv.price 		= r.price
 					@rcv.receive_id = @receives.id
 					@rcv.save
+					
+					# update stock cards.
+					@sc = StockCard.new
+					@sc.product_id = r.product_id
+					@sc.qty = r.qty
+					@sc.company_id = params[:company_id]
+					@sc.date_update = params[:receive_date]
+					@sc.receive_id = @receives.id
+					#
+					@sc.save
+					
 				end
 				# Clear temp product
 				deletetemp(params[:sess])
