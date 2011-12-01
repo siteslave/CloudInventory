@@ -2,7 +2,6 @@ class ReceivesController < ApplicationController
   # GET     /receives
   def index
     @Receives = Receive.order('receive_date').all
-
     @rows = @Receives.collect { |r| {
         :id => r.id,
         :receive_date => r.receive_date,
@@ -12,11 +11,9 @@ class ReceivesController < ApplicationController
         :total_price => r.receive_details.sum('price*qty'),
         :total_qty => r.receive_details.sum('qty')
     } }
-
     render :json => { :success => true, :rows => @rows }
-
   end
-
+  # POST	/receives/sess
   def sess
     @sess = srand
 
