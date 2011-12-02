@@ -143,9 +143,9 @@ class ReceiveDetailsController < ApplicationController
 			else
 				render :text => @receives.errors.to_json
 			end
-	end
+	end	
 	
-	private
+        private
 	# @private 
 	# check product ready exist in table
 	def chkproduct( product_id, sess)
