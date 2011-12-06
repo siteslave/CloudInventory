@@ -72,7 +72,14 @@ CloudInventory::Application.routes.draw do
   resources :unit_count
   resources :users
   resources :companies
-
+  resources :paids do
+  	collection do
+  		post 'list'
+  		post 'cleartemp'
+  		post 'save'
+  	end
+  end
+  
   resources :receive_details do
     collection do
       post 'list'
