@@ -49,8 +49,34 @@ Ext.define('CloudHIS.view.services.RequestGrid', {
             },'-',
 
             {
-                text: 'อนุมัติจ่าย',
-                iconCls:'paste'
+                text: 'จ่ายพัสดุ',
+                iconCls:'paste', handler: function(){
+                	var PaidProductsPanel = new Ext.create('CloudHIS.view.services.PaidProducts');
+                	var winPaid = new Ext.create('Ext.window.Window', {
+                		title: 'จ่ายวัสดุ',
+                		modal: true,
+                		resizable: false,
+                		
+                		layout: 'fit',
+                		items: [
+                			PaidProductsPanel
+                		],
+                		buttonAlign: 'left',
+                		buttons: [
+                			{
+                				text: 'สร้างรายการใหม่', iconCls: 'new'
+                			},'->',
+                			{
+                				text: 'ยกเลิกการเบิก', iconCls: 'clear'
+                			},
+                			{
+                				text: 'บันทึกใบเบิก', iconCls: 'disk'
+                			}
+                		]
+                	});
+                	
+                	winPaid.show();
+                }
             },'-',
             {
                 text: 'ยกเลิก',
