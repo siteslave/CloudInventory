@@ -59,10 +59,10 @@ Ext.define('CloudHIS.view.services.PaidProducts', {
             }, '-',
             {
             	xtype: 'combo',
-            	store: paidStoreMain,
+            	store: new Ext.create('CloudHIS.store.DepartmentsStore'),
             	fieldLabel: 'หน่วยเบิก',
-            	valueField: 'product_id',
-            	displayField: 'company_name',
+            	valueField: 'id',
+            	displayField: 'name',
             	allowBlank: false,
             	width: 350,
             	labelWidth: 70

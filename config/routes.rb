@@ -94,6 +94,11 @@ CloudInventory::Application.routes.draw do
     end
   end
 
+  resources :paids do
+    collection do
+      post 'list'
+    end
+  end
   # RESTFul for products
   resources :products
   #match 'products/:name' => 'products#search', :via => :get

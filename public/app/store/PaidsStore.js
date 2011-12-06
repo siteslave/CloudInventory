@@ -4,7 +4,7 @@ Ext.define('CloudHIS.store.PaidsStore', {
     proxy: {
         type: 'rest',
         noCache: false,
-        url: '/receives',
+        url: '/paids',
         reader: {
             type: 'json',
             root: 'rows',

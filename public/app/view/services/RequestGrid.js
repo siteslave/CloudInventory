@@ -64,13 +64,13 @@ Ext.define('CloudHIS.view.services.RequestGrid', {
                 		buttonAlign: 'left',
                 		buttons: [
                 			{
-                				text: 'สร้างรายการใหม่', iconCls: 'new'
+                				text: 'สร้างรายการใหม่'
                 			},'->',
                 			{
-                				text: 'ยกเลิกการเบิก', iconCls: 'clear'
+                				text: 'ยกเลิกการทั้งหมด'
                 			},
                 			{
-                				text: 'บันทึกใบเบิก', iconCls: 'disk'
+                				text: 'จ่ายวัสดุ'
                 			}
                 		]
                 	});
