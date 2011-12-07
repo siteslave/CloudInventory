@@ -145,7 +145,7 @@ class ReceiveDetailsController < ApplicationController
 			end
 	end	
 	
-        private
+  private
 	# @private 
 	# check product ready exist in table
 	def chkproduct( product_id, sess)
