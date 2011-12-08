@@ -65,7 +65,6 @@ Ext.define('CloudHIS.view.services.RequestGrid', {
                 		buttons: [
                 			{
                 				text: 'สร้างรายการใหม่', handler: function() {
-                					//var paidSession = Ext.getCmp('paidSESS001');
                 					Ext.Ajax.request({
 					                    url: 'receives/sess',
 					                    success: function(response) {
@@ -74,9 +73,6 @@ Ext.define('CloudHIS.view.services.RequestGrid', {
 					                });
                 				}
                 			},'->',
-                			{
-                				text: 'ยกเลิกการทั้งหมด'
-                			},
                 			{
                 				text: 'จ่ายวัสดุ'
                 			}

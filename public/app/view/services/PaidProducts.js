@@ -315,6 +315,52 @@ function deleteProductPaid() {
 	    });
 	}
 }
+// Clear all product in session
+function ClearCurrentSession() {
+	Ext.Msg.show({
+        title: 'ยืนยันการลบ',
+        msg: 'คุณต้องการลบรายการทั้งหมดใช่หรือไม่',
+        buttonText: {
+            yes: 'ใช่',
+            no: 'ไม่ใช่'
+        },
+        waitMsg: 'กำลังลบข้อมูล...',
+        fn: function(btn){
+            if(btn == 'yes'){
+                Ext.Ajax.request({
+                    url: '/paids/cleartemp',
+                    method: 'delete',
+                    params: {
+                    	sess: Ext.getCmp('paidSESS001').getValue()
+                    },
+                    
+                    success: function(resp) {
+                        var resp = resp.responseText;
+                        if(resp == 'ok'){
+                            //Ext.Msg.alert('ผลการลบ','ลบรายการเรียบร้อยแล้ว.');
+                            //load data store
+                         	paidStoreProducts.load({
+								params: {
+								    sess: 'no'
+								}
+							});   
+                        }else{
+                            Ext.Msg.alert('ผลการลบ', resp);
+                        }
+                    },
+                    failure: function(result, request) {
+                        Ext.Msg.alert(
+                            'เกิดข้อผิดพลาด',
+                            'Server error: ' + result.status + ' - ' + result.statusText
+                        );
+                    }
+                });
+            }
+        },
+        icons: Ext.Msg.QUESTION
+    });	
+}
+
 Ext.define('CloudHIS.view.services.PaidProducts', {
     extend: 'CloudHIS.view.Container',
     
@@ -399,9 +445,16 @@ Ext.define('CloudHIS.view.services.PaidProducts', {
 	    		handler: function() {
 					deleteProductPaid();
 				}
-	    	},
+	    	},'->',
+			{
+				text: 'ยกเลิกการทั้งหมด',
+				iconCls: 'refresh',
+				handler: function() {
+					ClearCurrentSession();
+				}
+			},
 	    	{
-	    		xtype: 'textfield',
+	    		xtype: 'hiddenfield',
 	    		id: 'paidSESS001'
 	    	}
 	    ],

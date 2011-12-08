@@ -84,6 +84,69 @@ class PaidsController < ApplicationController
     end
   end
   
+  # Clear product in current session
+  def cleartemp
+    if TempProduct.delete_all(:sess => params[:sess])
+      # delete success
+      render :text => 'ok'
+    else
+      # delete failed
+      render :text => 'Can not clear product in session: ' + @product.errors.to_json
+    end
+  end
+  
+  # Save session 
+  # POST /paids/save
+  def save
+    
+    # save paids summary
+    @paids = Paid.new
+    @paids.paid_date = Time.now
+    @paids.department_id = params[:department_id]
+    # save paid
+    if @paids.save
+    
+      # save paid detail
+      @temp = TempProduct.where(:sess => params[:sess])
+      @temp.each do |r|
+        # create paid detail
+        @paid_detail = PaidDetail.new
+        
+        @paid_detail.product_id = r.product_id
+        @paid_detail.qty = r.qty
+        @paid_detail.price = r.price
+        @paid_detail.paid_id = @paids.id
+        
+        @paid_detail.save
+        
+        #update product detail
+        @product = Product.find(r.product_id)
+        #update product
+        newQty = @product.qty - r.qty.to_i
+        @product.qty = newQty
+        @product.price = r.price
+        @product.save
+   
+        # update stock cards.
+        @sc = StockCard.new
+        @sc.product_id = r.product_id
+        @sc.qty = r.qty
+        @sc.department_id = params[:department_id]
+        @sc.date_update = params[:paid_date]
+        @sc.paid_id = @paids.id
+        #
+        @sc.save
+
+      end # end do loop
+           
+       render :text => 'ok'
+       
+    else
+      render :text => 'Can not save data.'  
+    end
+    
+  end
+  
   # declare private function
   private
   # check product ready exist in table
