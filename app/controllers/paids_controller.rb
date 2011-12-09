@@ -138,8 +138,10 @@ class PaidsController < ApplicationController
         @sc.save
 
       end # end do loop
-           
-       render :text => 'ok'
+        # Clear temp product           
+        deletetemp(params[:sess])
+        # render ok status
+        render :text => 'ok'
        
     else
       render :text => 'Can not save data.'  

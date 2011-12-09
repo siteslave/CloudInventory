@@ -360,6 +360,25 @@ function ClearCurrentSession() {
         icons: Ext.Msg.QUESTION
     });	
 }
+//set disable button
+function disbledButton() {
+	Ext.getCmp('pdAddProduct001').setDisabled(true)		    		
+	Ext.getCmp('pdEditProduct001').setDisabled(true)	
+	Ext.getCmp('pdRemoveProduct001').setDisabled(true)	
+	Ext.getCmp('pdClearAllProduct001').setDisabled(true)	
+	Ext.getCmp('pdGenerateSession').setDisabled(false)
+	Ext.getCmp('pdPaidProductSession').setDisabled(true)    	 		    		
+}
+
+function enabledButton() {
+	Ext.getCmp('pdAddProduct001').setDisabled(false)		    		
+	Ext.getCmp('pdEditProduct001').setDisabled(false)	
+	Ext.getCmp('pdRemoveProduct001').setDisabled(false)	
+	Ext.getCmp('pdClearAllProduct001').setDisabled(false)	  
+	Ext.getCmp('pdGenerateSession').setDisabled(true) 
+	Ext.getCmp('pdPaidProductSession').setDisabled(false)   		    		
+}
+
 
 Ext.define('CloudHIS.view.services.PaidProducts', {
     extend: 'CloudHIS.view.Container',
@@ -436,88 +455,117 @@ Ext.define('CloudHIS.view.services.PaidProducts', {
 	                        Ext.getCmp('paidSESS001').setValue(response.responseText);
 	                    }
 	                });
+	                
+	                enabledButton();
 				},
-				iconCls: 'bookmark'
+				iconCls: 'bookmark',
+				id: 'pdGenerateSession'
 			},
 			{
 				text: 'จ่ายวัสดุ',
+				id: 'pdPaidProductSession', disabled: true,
 				iconCls: 'retweet',
 				handler: function() {
-					Ext.Msg.show({
-						title: 'ยืนยัการจ่ายวัสดุ',
-						msg: 'คุณต้องการจ่ายวัสดุให้กับหน่วยงานนี้ใช่หรือไม่',
-						buttonText: {
-							yes: 'ใช่',
-							no: 'ไม่ใช่'
-						},
-						waitMsg: 'กำลังบันทึก...',
-						fn: function(btn) {
-							if (btn == 'yes') {
-								Ext.Ajax.request({
-									url: 'paids/save',
-									method: 'post',
-									params: {
-										paid_date: Ext.getCmp('paidDatePaid001').getValue(),
-										department_id: Ext.getCmp('paidDepartmentId001').getValue(),
-										sess: Ext.getCmp('paidSESS001').getValue()
-									},
-									success: function(resp) {
-				                        var resp = resp.responseText;
-				                        if(resp == 'ok'){
-				                            //Ext.Msg.alert('ผลการลบ','ลบรายการเรียบร้อยแล้ว.');
-				                            //load data store
-				                         	paidStoreProducts.load({
-												params: {
-												    sess: 'no'
-												}
-											});   
-				                        }else{
-				                            Ext.Msg.alert('เกิดข้อผิดพลาด', resp);
-				                        }
-				                    },
-				                    failure: function(result, request) {
-				                        Ext.Msg.alert(
-				                            'เกิดข้อผิดพลาด',
-				                            'Server error: ' + result.status + ' - ' + result.statusText
-				                        );
-				                    }
-								});
+					var x = Ext.getCmp('paidDatePaid001').getValue();
+					var y = Ext.getCmp('paidDepartmentId001').getValue();
+					var s = Ext.getCmp('paidSESS001').getValue();
+					var grid = Ext.getCmp('paidGridMainPaidProduct001'),
+					    c = grid.store.totalCount;
+		    
+					if(!x){
+						Ext.Msg.alert('ข้อมูลไม่สมบูรณ์', 'กรุณาเลือกวันที่');
+					}else if(!y){
+						Ext.Msg.alert('ข้อมูลไม่สมบูรณ์', 'กรุณาเลือกแผนกที่ต้องการจ่าย');
+					}else if(!s){
+						Ext.Msg.alert('ข้อมูลไม่สมบูรณ์', 'กรุณาคลิกปุ่มเริ่มใหม่');
+					}else if(!c) {
+						Ext.Msg.alert('ข้อมูลไม่สมบูรณ์', 'ไม่พบรายการสินค้าที่ต้องการจ่าย');
+					}else{
+						Ext.Msg.show({
+							title: 'ยืนยัการจ่ายวัสดุ',
+							msg: 'คุณต้องการจ่ายวัสดุให้กับหน่วยงานนี้ใช่หรือไม่',
+							buttonText: {
+								yes: 'ใช่',
+								no: 'ไม่ใช่'
+							},
+							waitMsg: 'กำลังบันทึก...',
+							fn: function(btn) {
+								if (btn == 'yes') {
+									Ext.Ajax.request({
+										url: 'paids/save',
+										method: 'post',
+										params: {
+											paid_date: Ext.getCmp('paidDatePaid001').getValue(),
+											department_id: Ext.getCmp('paidDepartmentId001').getValue(),
+											sess: Ext.getCmp('paidSESS001').getValue()
+										},
+										success: function(resp) {
+					                        var resp = resp.responseText;
+					                        if(resp == 'ok'){
+					                            //Ext.Msg.alert('ผลการลบ','ลบรายการเรียบร้อยแล้ว.');
+					                            //load data store
+					                         	paidStoreProducts.load({
+													params: {
+													    sess: 'no'
+													}
+												});  
+												disbledButton(); 
+					                        }else{
+					                            Ext.Msg.alert('เกิดข้อผิดพลาด', resp);
+					                            enabledButton();
+					                        }
+					                    },
+					                    failure: function(result, request) {
+					                    	enabledButton();
+					                        Ext.Msg.alert(
+					                            'เกิดข้อผิดพลาด',
+					                            'Server error: ' + result.status + ' - ' + result.statusText
+					                        );
+					                    }
+									});
+								}
 							}
-						}
-					});
+						});	
+					}
+
 				}
 			}
 	    ],
 	    bbar: [
 	    	{
-	    		text: 'เพิ่มรายการ',
+	    		text: 'เพิ่มรายการ', disabled: true,
 	    		iconCls: 'add', handler: function() {
 	    			winPaidAddProduct.show();
-	    		}
+	    		},
+	    		id: 'pdAddProduct001'
 	    	},
 	    	{
-	    		text: 'แก้ไข',
+	    		text: 'แก้ไข', disabled: true,
 	    		iconCls: 'edit',
 	    		handler: function(){
 	    			updateProductPaid();
-	    		}
+	    		},
+	    		id: 'pdEditProduct001'
 	    	},
 	    	{
 	    		text: 'ลบรายการ',
 	    		iconCls: 'remove',
 	    		handler: function() {
 					deleteProductPaid();
-				}
+				},
+				id: 'pdRemoveProduct001',
+				disabled: true
 	    	},'->',
 			{
-				text: 'ยกเลิกการทั้งหมด',
+				text: 'ยกเลิกการทั้งหมด', disabled: true,
 				iconCls: 'refresh',
 				handler: function() {
 					ClearCurrentSession();
-				}
+				},
+				id: 'pdClearAllProduct001'
 			},
 	    	{
-	    		xtype: 'textfield',
+	    		xtype: 'hiddenfield',
 	    		id: 'paidSESS001'
 	    	}
 	    ],
