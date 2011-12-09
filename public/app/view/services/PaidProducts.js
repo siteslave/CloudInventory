@@ -369,7 +369,7 @@ Ext.define('CloudHIS.view.services.PaidProducts', {
 	    xtype: 'grid',
 	    title: 'บันทึกการจ่ายพัสดุให้หน่วยงาน',
         //iconCls: 'list',
-	    width: 660,
+	    width: 750,
 	    height: 400,
 	    frame: false,
 	    id: 'paidGridMainPaidProduct001',
@@ -412,7 +412,9 @@ Ext.define('CloudHIS.view.services.PaidProducts', {
                 labelWidth: 60,
                 format: 'd/m/Y',
                 width: 160,
-                allowBlank: false
+                allowBlank: false,
+                name: 'paid_date',
+                id: 'paidDatePaid001'
             }, '-',
             {
             	xtype: 'combo',
@@ -421,9 +423,70 @@ Ext.define('CloudHIS.view.services.PaidProducts', {
             	valueField: 'id',
             	displayField: 'name',
             	allowBlank: false,
-            	width: 350,
-            	labelWidth: 70
-            }
+            	width: 300,
+            	labelWidth: 70,
+            	name: 'department_id',
+            	id: 'paidDepartmentId001'
+            }, '-',
+            {
+				text: 'เริ่มใหม่', handler: function() {
+					Ext.Ajax.request({
+	                    url: 'receives/sess',
+	                    success: function(response) {
+	                        Ext.getCmp('paidSESS001').setValue(response.responseText);
+	                    }
+	                });
+				},
+				iconCls: 'bookmark'
+			},
+			{
+				text: 'จ่ายวัสดุ',
+				iconCls: 'retweet',
+				handler: function() {
+					Ext.Msg.show({
+						title: 'ยืนยัการจ่ายวัสดุ',
+						msg: 'คุณต้องการจ่ายวัสดุให้กับหน่วยงานนี้ใช่หรือไม่',
+						buttonText: {
+							yes: 'ใช่',
+							no: 'ไม่ใช่'
+						},
+						waitMsg: 'กำลังบันทึก...',
+						fn: function(btn) {
+							if (btn == 'yes') {
+								Ext.Ajax.request({
+									url: 'paids/save',
+									method: 'post',
+									params: {
+										paid_date: Ext.getCmp('paidDatePaid001').getValue(),
+										department_id: Ext.getCmp('paidDepartmentId001').getValue(),
+										sess: Ext.getCmp('paidSESS001').getValue()
+									},
+									success: function(resp) {
+				                        var resp = resp.responseText;
+				                        if(resp == 'ok'){
+				                            //Ext.Msg.alert('ผลการลบ','ลบรายการเรียบร้อยแล้ว.');
+				                            //load data store
+				                         	paidStoreProducts.load({
+												params: {
+												    sess: 'no'
+												}
+											});   
+				                        }else{
+				                            Ext.Msg.alert('เกิดข้อผิดพลาด', resp);
+				                        }
+				                    },
+				                    failure: function(result, request) {
+				                        Ext.Msg.alert(
+				                            'เกิดข้อผิดพลาด',
+				                            'Server error: ' + result.status + ' - ' + result.statusText
+				                        );
+				                    }
+								});
+							}
+						}
+					});
+				}
+			}
 	    ],
 	    bbar: [
 	    	{
@@ -454,7 +517,7 @@ Ext.define('CloudHIS.view.services.PaidProducts', {
 				}
 			},
 	    	{
-	    		xtype: 'hiddenfield',
+	    		xtype: 'textfield',
 	    		id: 'paidSESS001'
 	    	}
 	    ],

@@ -61,23 +61,7 @@ Ext.define('CloudHIS.view.services.RequestGrid', {
                 		items: [
                 			PaidProductsPanel
                 		],
-                		buttonAlign: 'left',
-                		buttons: [
-                			{
-                				text: 'สร้างรายการใหม่', handler: function() {
-                					Ext.Ajax.request({
-					                    url: 'receives/sess',
-					                    success: function(response) {
-					                        Ext.getCmp('paidSESS001').setValue(response.responseText);
-					                    }
-					                });
-                				}
-                			},'->',
-                			{
-                				text: 'จ่ายวัสดุ'
-                			}
-                			
-                		]
+                		buttonAlign: 'left'
                 	});
                 	
                 	winPaid.show();

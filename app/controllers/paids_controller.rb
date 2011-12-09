@@ -50,7 +50,7 @@ class PaidsController < ApplicationController
       if @products.save
         render :json => { :success => true }
       else # has error(s)
-        render :json => { :success => false, :msg => @Products.errors.to_json }
+        render :json => { :success => false, :msg => @products.errors.to_json }
       end
     end #end if
   end
@@ -101,7 +101,7 @@ class PaidsController < ApplicationController
     
     # save paids summary
     @paids = Paid.new
-    @paids.paid_date = Time.now
+    @paids.paid_date = params[:paid_date]
     @paids.department_id = params[:department_id]
     # save paid
     if @paids.save
