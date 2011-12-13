@@ -1,4 +1,31 @@
 class PaidsController < ApplicationController
+  #GET  /paids
+  def index
+    if params[:paid_date]
+      time = params[:paid_date].to_date
+      time = time.strftime('%Y-%m-%d')
+      @paids = Paid.where(:paid_date => params[:paid_date].to_date)
+    else
+      if params[:department_id]
+        @paids = Paid.where(:department_id => params[:department_id])
+      else
+        time = Time.now
+        time = time.strftime('%Y-%m-%d')
+        @paids = Paid.where(:paid_date => time)
+      end
+      
+    end
+    
+    @rows = @paids.collect {|r|{
+      :id => r.id,
+      :department_name => r.department.name,
+      :paid_date => r.paid_date,
+      :qty => r.paid_detail.sum('qty'),
+      :price => r.paid_detail.sum('qty * price')
+    }}
+    
+    render :json => { :success => true, :rows => @rows }
+  end
   # GET /paids/tmpproducts/:sess
   def tmpproducts
     
